@@ -1,3 +1,5 @@
+import { Link, NavLink } from 'react-router-dom';
+
 interface HeaderProps {}
 
 const Header = ({}: HeaderProps) => {
@@ -5,25 +7,25 @@ const Header = ({}: HeaderProps) => {
     <header>
       <nav className="navbar navbar-light">
         <div className="container">
-          <a className="navbar-brand" href="/">
+          <Link className="navbar-brand" to="/">
             conduit
-          </a>
+          </Link>
           <ul className="nav navbar-nav pull-xs-right">
             <li className="nav-item">
               {/* Add "active" className when you're on that page"  */}
-              <a className="nav-link active" href="/">
+              <NavLink className="nav-link " to="/" end>
                 Home
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/login">
+              <NavLink className="nav-link" to="/login">
                 Sign in
-              </a>
+              </NavLink>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/register">
+              <NavLink className="nav-link" to="/register">
                 Sign up
-              </a>
+              </NavLink>
             </li>
           </ul>
         </div>
