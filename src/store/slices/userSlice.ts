@@ -1,5 +1,4 @@
 import { create, StateCreator } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
 
 interface State {
   isLoggedIn: boolean;
@@ -26,13 +25,11 @@ const initialState: State = {
 
 export interface UserSlice extends State, Actions {}
 
-export const useUserStore = create<UserSlice>()(
-  immer((set) => ({
-    ...initialState,
-    login: (user, token) => set({ isLoggedIn: true, user, token }),
-    logout: () => set({ ...initialState }),
-  })),
-);
+export const useUserStore = create<UserSlice>((set) => ({
+  ...initialState,
+  login: (user, token) => set({ isLoggedIn: true, user, token }),
+  logout: () => set({ ...initialState }),
+}));
 
 export const createUserSlice: StateCreator<UserSlice, [], [], UserSlice> = (
   set,
