@@ -13,6 +13,7 @@ import ProfilePage from './routes/profile.tsx';
 import UserPosts from './components/UserPosts.tsx';
 import UserFavorites from './components/UserFavorites.tsx';
 import RootPage from './routes/root.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
 
 const router = createBrowserRouter([
   {
@@ -33,11 +34,19 @@ const router = createBrowserRouter([
       },
       {
         path: '/settings',
-        element: <SettingsPage />,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/editor',
-        element: <EditorPage />,
+        element: (
+          <ProtectedRoute>
+            <EditorPage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: ':slug',
@@ -51,7 +60,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile/@:username',
-        element: <ProfilePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             index: true,
