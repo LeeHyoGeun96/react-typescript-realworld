@@ -1,5 +1,11 @@
 import { create, StateCreator } from 'zustand';
 
+interface User {
+  username: string;
+  email: string;
+  bio: string;
+  image: string | null;
+}
 interface State {
   isLoggedIn: boolean;
   user: User | null;
@@ -9,12 +15,6 @@ interface State {
 interface Actions {
   login: (user: User, token: string) => void;
   logout: () => void;
-}
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
 }
 
 const initialState: State = {
