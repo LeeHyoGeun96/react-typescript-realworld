@@ -14,6 +14,11 @@ import UserPosts from './components/UserPosts.tsx';
 import UserFavorites from './components/UserFavorites.tsx';
 import RootPage from './routes/root.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {},
+});
 
 const router = createBrowserRouter([
   {
@@ -82,6 +87,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>,
 );
