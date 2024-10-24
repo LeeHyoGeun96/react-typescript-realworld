@@ -30,7 +30,7 @@ export const action =
     } catch (error) {
       // 에러 처리
       // 예를 들어, 에러 메시지를 반환할 수 있음
-      if (error instanceof NetworkError) {
+      if (NetworkError.isNetworkError(error)) {
         console.dir(error);
         return error;
       }

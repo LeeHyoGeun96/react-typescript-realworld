@@ -23,7 +23,7 @@ class NetworkError extends Error {
     code: number;
     message: string;
     statusTest: string;
-    response: unknown;
+    response?: unknown;
   }) {
     const errorMessage = NetworkError.errorMessages[code] || message;
     super(errorMessage);
