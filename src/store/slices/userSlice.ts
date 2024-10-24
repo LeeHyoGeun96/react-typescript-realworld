@@ -6,6 +6,7 @@ interface User {
   bio: string;
   image: string | null;
 }
+
 interface State {
   isLoggedIn: boolean;
   user: User | null;
