@@ -25,7 +25,7 @@ export const action =
       const user = await authService.signUp({ user: signUpData });
 
       queryClient.setQueryData(['user'], user);
-
+      console.log('성공함');
       return redirect('/login');
     } catch (error) {
       // 에러 처리

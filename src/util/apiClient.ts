@@ -6,9 +6,9 @@ import axios, {
 } from 'axios';
 import NetworkError from '../errors/NetworkError';
 
-export const createApi = (baseURL: string) => {
+export const createApi = () => {
   const instance: AxiosInstance = axios.create({
-    baseURL,
+    baseURL: '/api',
     headers: {
       'Content-Type': 'application/json',
     },
