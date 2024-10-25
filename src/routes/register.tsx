@@ -23,18 +23,17 @@ export const action =
     try {
       // API 호출을 통해 사용자 등록
       const user = await authService.signUp({ user: signUpData });
-
       queryClient.setQueryData(['user'], user);
-      console.log('성공함');
       return redirect('/login');
     } catch (error) {
       // 에러 처리
       // 예를 들어, 에러 메시지를 반환할 수 있음
       if (NetworkError.isNetworkError(error)) {
-        console.dir(error);
-        return error;
+        if (error.code === 422) {
+          return error;
+        }
+        throw error;
       }
-      console.log(error);
       throw new Error('알 수 없는 네트워크 오류가 발생했습니다.');
     }
   };
