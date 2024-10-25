@@ -8,7 +8,7 @@ import NetworkError from '../errors/NetworkError';
 
 export const createApi = () => {
   const instance: AxiosInstance = axios.create({
-    baseURL: '/api',
+    baseURL: `${import.meta.env.VITE_API_URL}`,
     headers: {
       'Content-Type': 'application/json',
     },
