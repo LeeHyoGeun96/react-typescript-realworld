@@ -23,4 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# .env 파일 무시하기
 .env
+.env.local
+.env.development
+.env.test
+.env.production
