@@ -35,3 +35,7 @@ interface ErrorResponse {
     body: string[];
   };
 }
+
+interface ValidationErrors {
+  [key: string]: string[];
+}

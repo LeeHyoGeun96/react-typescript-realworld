@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import './index.css';
 import IndexPage from './routes/home.tsx';
-import LoginPage from './routes/login.tsx';
+import LoginPage, { action as loginAction } from './routes/login.tsx';
 import RegisterPage, { action as registerAction } from './routes/register.tsx';
 import SettingsPage from './routes/settings.tsx';
 import EditorPage from './routes/editor.tsx';
@@ -32,6 +32,7 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <LoginPage />,
+        action: loginAction(queryClient),
       },
       {
         path: '/register',

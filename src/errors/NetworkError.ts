@@ -1,7 +1,7 @@
 class NetworkError extends Error {
   code: number;
   statusText: string;
-  response: unknown;
+  errors?: ValidationErrors;
 
   static errorMessages: Record<number, string> = {
     401: '인증이 필요합니다. 로그인 정보를 확인해주세요.',
@@ -19,19 +19,19 @@ class NetworkError extends Error {
     code,
     message,
     statusText,
-    response,
+    errors,
   }: {
     code: number;
     message: string;
     statusText: string;
-    response?: unknown;
+    errors?: ValidationErrors;
   }) {
     const errorMessage = NetworkError.errorMessages[code] || message;
     super(errorMessage);
     this.name = 'NetworkError';
     this.code = code;
     this.statusText = statusText;
-    this.response = response;
+    this.errors = errors;
   }
 
   static isNetworkError(error: unknown): error is NetworkError {

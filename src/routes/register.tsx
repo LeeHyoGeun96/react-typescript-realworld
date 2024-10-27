@@ -1,12 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
-import {
-  ActionFunctionArgs,
-  Form,
-  redirect,
-  useActionData,
-} from 'react-router-dom';
+import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
 import { authService } from '../services/auth';
 import NetworkError from '../errors/NetworkError';
+import AuthForm from '../components/AuthForm';
 
 export const action =
   (queryClient: QueryClient) =>
@@ -20,80 +16,33 @@ export const action =
       password: String(rawSignUpData.password),
     };
 
+    if (!signUpData.username || !signUpData.email || !signUpData.password) {
+      return { errors: ['All fields are required'] };
+    }
+
     try {
       // API 호출을 통해 사용자 등록
       const user = await authService.signUp({ user: signUpData });
       queryClient.setQueryData(['user'], user);
       return redirect('/login');
     } catch (error) {
-      // 에러 처리
-      // 예를 들어, 에러 메시지를 반환할 수 있음
       if (NetworkError.isNetworkError(error)) {
-        if (error.code === 422) {
-          return error;
+        if (error.code === 422 || error.code === 403) {
+          console.log(error.errors);
+          return error.errors;
         }
-        throw error;
       }
-      throw new Error('알 수 없는 네트워크 오류가 발생했습니다.');
+      throw error;
     }
   };
 
 interface RegisterPageProps {}
 
 const RegisterPage = ({}: RegisterPageProps) => {
-  const actionData = useActionData() as { info: string | null };
-  if (actionData?.info) {
-    console.log(actionData.info);
-  }
+  const errors = useActionData() as ValidationErrors | undefined;
+  console.log(errors);
 
-  return (
-    <div className="auth-page">
-      <div className="container page">
-        <div className="row">
-          <div className="col-md-6 offset-md-3 col-xs-12">
-            <h1 className="text-xs-center">Sign up</h1>
-            <p className="text-xs-center">
-              <a href="/login">Have an account?</a>
-            </p>
-
-            <ul className="error-messages">
-              <li>That email is already taken</li>
-            </ul>
-
-            <Form method="post">
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="text"
-                  name="username"
-                  placeholder="Username"
-                />
-              </fieldset>
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="text"
-                  name="email"
-                  placeholder="Email"
-                />
-              </fieldset>
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                />
-              </fieldset>
-              <button className="btn btn-lg btn-primary pull-xs-right">
-                Sign up
-              </button>
-            </Form>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <AuthForm type="register" errors={errors} />;
 };
 
 export default RegisterPage;
