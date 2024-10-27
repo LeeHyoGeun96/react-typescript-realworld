@@ -15,6 +15,7 @@ import UserFavorites from './components/UserFavorites.tsx';
 import RootPage from './routes/root.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ErrorPage from './routes/error.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {},
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <RootPage />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
