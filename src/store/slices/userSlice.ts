@@ -1,9 +1,9 @@
 import { create, StateCreator } from 'zustand';
 
 interface User {
-  username: string;
-  email: string;
-  bio: string;
+  username: string | null;
+  email: string | null;
+  bio: string | null;
   image: string | null;
 }
 
