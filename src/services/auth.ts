@@ -9,7 +9,11 @@ export const authService = {
     return apiClient.post<LoginResponse, LoginRequest>('/users/login', data);
   },
 
-  getCurrentUser: (): Promise<User> => {
-    return apiClient.get<User>('/user');
+  getCurrentUser: (token: string) => {
+    return apiClient.get<User>('/user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 };

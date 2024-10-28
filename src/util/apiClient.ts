@@ -60,7 +60,11 @@ export const createApi = () => {
 
   return {
     get: <ResponseType>(endpoint: string, config?: AxiosRequestConfig) =>
-      request<ResponseType>({ ...config, method: 'GET', url: endpoint }),
+      request<ResponseType>({
+        ...config,
+        method: 'GET',
+        url: endpoint,
+      }),
     post: <ResponseType, RequestType>(
       endpoint: string,
       data?: RequestType,
@@ -73,7 +77,12 @@ export const createApi = () => {
         data,
       }),
     delete: <ResponseType>(endpoint: string, config?: AxiosRequestConfig) =>
-      request<ResponseType>({ ...config, method: 'DELETE', url: endpoint }),
+      request<ResponseType>({
+        ...config,
+        method: 'DELETE',
+        url: endpoint,
+      }),
+
     patch: <ResponseType, RequestType>(
       endpoint: string,
       data?: RequestType,

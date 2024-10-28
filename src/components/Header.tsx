@@ -4,8 +4,8 @@ import { useBoundStore } from '../store';
 interface HeaderProps {}
 
 const Header = ({}: HeaderProps) => {
-  const isLoggedIn = useBoundStore.getState().isLoggedIn;
-  const user = useBoundStore.getState().user;
+  const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
+  const user = useBoundStore((state) => state.user);
 
   return (
     <header>

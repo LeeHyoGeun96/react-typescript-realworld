@@ -12,7 +12,7 @@ import ArticlePage from './routes/article.tsx';
 import ProfilePage from './routes/profile.tsx';
 import UserPosts from './components/UserPosts.tsx';
 import UserFavorites from './components/UserFavorites.tsx';
-import RootPage from './routes/root.tsx';
+import RootPage, { loader as rootLoader } from './routes/root.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorPage from './routes/error.tsx';
@@ -26,6 +26,7 @@ const router = createBrowserRouter([
     path: '/',
     element: <RootPage />,
     errorElement: <ErrorPage />,
+    loader: rootLoader(queryClient),
     children: [
       {
         index: true,

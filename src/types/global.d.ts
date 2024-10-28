@@ -1,9 +1,11 @@
 interface User {
-  email: string;
-  token: string;
-  username: string;
-  bio: string;
-  image: string | null;
+  user: {
+    email: string;
+    token: string;
+    username: string;
+    bio: string;
+    image: string | null;
+  };
 }
 
 interface LoginRequest {
@@ -13,9 +15,7 @@ interface LoginRequest {
   };
 }
 
-interface LoginResponse {
-  user: User;
-}
+type LoginResponse = User;
 
 interface SignupFormDataType {
   username: string;
@@ -26,9 +26,7 @@ interface SignupRequest {
   user: SignupFormDataType;
 }
 
-interface SignupResponse {
-  user: User;
-}
+type SignupResponse = User;
 
 interface ErrorResponse {
   errors: {
