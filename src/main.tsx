@@ -50,6 +50,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
+
       {
         path: '/editor',
         element: (

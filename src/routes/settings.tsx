@@ -1,6 +1,19 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { useBoundStore } from '../store';
+
 interface SettingsPageProps {}
 
 const SettingsPage = ({}: SettingsPageProps) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const handleLogout = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['auth'] });
+    useBoundStore.getState().logout();
+    navigate('/', { replace: true });
+  };
+
   return (
     <div className="settings-page">
       <div className="container page">
@@ -55,7 +68,12 @@ const SettingsPage = ({}: SettingsPageProps) => {
               </fieldset>
             </form>
             <hr />
-            <button className="btn btn-outline-danger">
+
+            <button
+              className="btn btn-outline-danger"
+              type="submit"
+              onClick={handleLogout}
+            >
               Or click here to logout.
             </button>
           </div>
