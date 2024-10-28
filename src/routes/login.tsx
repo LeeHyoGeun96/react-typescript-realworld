@@ -1,9 +1,8 @@
 import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import { QueryClient } from '@tanstack/react-query';
-import { authService } from '../services/auth';
 import NetworkError from '../errors/NetworkError';
-import { useBoundStore } from '../store';
+import { authQueryOptions } from '../queryOptions/authQueryOptions';
 
 export const action =
   (queryClient: QueryClient) =>
@@ -17,10 +16,9 @@ export const action =
     const password = formData.get('password') as string;
 
     try {
-      const { user } = await authService.login({ user: { email, password } });
-      useBoundStore.getState().login(user, user.token);
-      queryClient.setQueryData(['user'], user);
-      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      await queryClient.fetchQuery(
+        authQueryOptions.login({ user: { email, password } }),
+      );
 
       return redirect('/');
     } catch (error) {

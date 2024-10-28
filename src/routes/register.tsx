@@ -1,8 +1,8 @@
 import { QueryClient } from '@tanstack/react-query';
 import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
-import { authService } from '../services/auth';
 import NetworkError from '../errors/NetworkError';
 import AuthForm from '../components/AuthForm';
+import { authQueryOptions } from '../queryOptions/authQueryOptions';
 
 export const action =
   (queryClient: QueryClient) =>
@@ -21,9 +21,9 @@ export const action =
     }
 
     try {
-      // API 호출을 통해 사용자 등록
-      const user = await authService.signUp({ user: signUpData });
-      queryClient.setQueryData(['user'], user);
+      await queryClient.fetchQuery(
+        authQueryOptions.signup({ user: signUpData }),
+      );
       return redirect('/login');
     } catch (error) {
       if (NetworkError.isNetworkError(error)) {
