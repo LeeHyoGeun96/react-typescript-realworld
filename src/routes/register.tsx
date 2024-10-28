@@ -1,51 +1,48 @@
+import { QueryClient } from '@tanstack/react-query';
+import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
+import NetworkError from '../errors/NetworkError';
+import AuthForm from '../components/AuthForm';
+import { authQueryOptions } from '../queryOptions/authQueryOptions';
+
+export const action =
+  (queryClient: QueryClient) =>
+  async ({ request }: ActionFunctionArgs) => {
+    const formData = await request.formData();
+    const rawSignUpData = Object.fromEntries(formData);
+
+    const signUpData: SignupFormDataType = {
+      username: String(rawSignUpData.username),
+      email: String(rawSignUpData.email),
+      password: String(rawSignUpData.password),
+    };
+
+    if (!signUpData.username || !signUpData.email || !signUpData.password) {
+      return { errors: ['All fields are required'] };
+    }
+
+    try {
+      await queryClient.fetchQuery(
+        authQueryOptions.signup({ user: signUpData }),
+      );
+      return redirect('/login');
+    } catch (error) {
+      if (NetworkError.isNetworkError(error)) {
+        if (error.code === 422 || error.code === 403) {
+          console.log(error.errors);
+          return error.errors;
+        }
+      }
+      throw error;
+    }
+  };
+
 interface RegisterPageProps {}
 
 const RegisterPage = ({}: RegisterPageProps) => {
-  return (
-    <div className="auth-page">
-      <div className="container page">
-        <div className="row">
-          <div className="col-md-6 offset-md-3 col-xs-12">
-            <h1 className="text-xs-center">Sign up</h1>
-            <p className="text-xs-center">
-              <a href="/login">Have an account?</a>
-            </p>
+  const errors = useActionData() as ValidationErrors | undefined;
+  console.log(errors);
 
-            <ul className="error-messages">
-              <li>That email is already taken</li>
-            </ul>
-
-            <form>
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="text"
-                  placeholder="Username"
-                />
-              </fieldset>
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="text"
-                  placeholder="Email"
-                />
-              </fieldset>
-              <fieldset className="form-group">
-                <input
-                  className="form-control form-control-lg"
-                  type="password"
-                  placeholder="Password"
-                />
-              </fieldset>
-              <button className="btn btn-lg btn-primary pull-xs-right">
-                Sign up
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <AuthForm type="register" errors={errors} />;
 };
 
 export default RegisterPage;

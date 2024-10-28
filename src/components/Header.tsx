@@ -1,8 +1,12 @@
 import { Link, NavLink } from 'react-router-dom';
+import { useBoundStore } from '../store';
 
 interface HeaderProps {}
 
 const Header = ({}: HeaderProps) => {
+  const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
+  const user = useBoundStore((state) => state.user);
+
   return (
     <header>
       <nav className="navbar navbar-light">
@@ -17,16 +21,46 @@ const Header = ({}: HeaderProps) => {
                 Home
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/login">
-                Sign in
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/register">
-                Sign up
-              </NavLink>
-            </li>
+            {!isLoggedIn ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/login">
+                    Sign in
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/register">
+                    Sign up
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/editor">
+                    New Article
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/settings">
+                    {' '}
+                    <i className="ion-gear-a"></i>&nbsp;Settings{' '}
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to={`/profile/${user?.username}`}>
+                    <img
+                      src={
+                        user?.image ||
+                        `https://ui-avatars.com/api/?name=${user?.username}`
+                      }
+                      className="user-pic"
+                    />
+                    {user?.username}
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </nav>
@@ -48,15 +82,15 @@ export default Header;
 //       <li className="nav-item">
 //         <a className="nav-link" href="/editor"> <i className="ion-compose"></i>&nbsp;New Article </a>
 //       </li>
-//       <li className="nav-item">
-//         <a className="nav-link" href="/settings"> <i className="ion-gear-a"></i>&nbsp;Settings </a>
-//       </li>
-//       <li className="nav-item">
-//         <a className="nav-link" href="/profile/eric-simons">
-//           <img src="" className="user-pic" />
-//           Eric Simons
-//         </a>
-//       </li>
+// <li className="nav-item">
+//   <a className="nav-link" href="/settings"> <i className="ion-gear-a"></i>&nbsp;Settings </a>
+// </li>
+// <li className="nav-item">
+//   <a className="nav-link" href="/profile/eric-simons">
+//     <img src="" className="user-pic" />
+//     Eric Simons
+//   </a>
+// </li>
 //     </ul>
 //   </div>
 // </nav>

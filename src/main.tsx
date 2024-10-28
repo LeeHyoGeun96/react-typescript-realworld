@@ -4,20 +4,29 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import './index.css';
 import IndexPage from './routes/home.tsx';
-import LoginPage from './routes/login.tsx';
-import RegisterPage from './routes/register.tsx';
+import LoginPage, { action as loginAction } from './routes/login.tsx';
+import RegisterPage, { action as registerAction } from './routes/register.tsx';
 import SettingsPage from './routes/settings.tsx';
 import EditorPage from './routes/editor.tsx';
 import ArticlePage from './routes/article.tsx';
 import ProfilePage from './routes/profile.tsx';
 import UserPosts from './components/UserPosts.tsx';
 import UserFavorites from './components/UserFavorites.tsx';
-import RootPage from './routes/root.tsx';
+import RootPage, { loader as rootLoader } from './routes/root.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ErrorPage from './routes/error.tsx';
+
+const queryClient = new QueryClient({
+  defaultOptions: {},
+});
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootPage />,
+    errorElement: <ErrorPage />,
+    loader: rootLoader(queryClient),
     children: [
       {
         index: true,
@@ -26,18 +35,29 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <LoginPage />,
+        action: loginAction(queryClient),
       },
       {
         path: '/register',
         element: <RegisterPage />,
+        action: registerAction(queryClient),
       },
       {
         path: '/settings',
-        element: <SettingsPage />,
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
       },
+
       {
         path: '/editor',
-        element: <EditorPage />,
+        element: (
+          <ProtectedRoute>
+            <EditorPage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: ':slug',
@@ -51,7 +71,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile/@:username',
-        element: <ProfilePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
         children: [
           {
             index: true,
@@ -69,6 +93,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>,
 );
