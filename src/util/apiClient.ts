@@ -10,9 +10,9 @@ interface ErrorResponse {
   errors: ValidationErrors;
 }
 
-export const createApi = () => {
+export const createApi = (url: string) => {
   const instance: AxiosInstance = axios.create({
-    baseURL: `${import.meta.env.VITE_API_URL}`,
+    baseURL: url,
     headers: {
       'Content-Type': 'application/json',
     },
