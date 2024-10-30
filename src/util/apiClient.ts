@@ -94,5 +94,16 @@ export const createApi = (url: string) => {
         url: endpoint,
         data,
       }),
+    put: <ResponseType, RequestType>(
+      endpoint: string,
+      data?: RequestType,
+      config?: AxiosRequestConfig,
+    ) =>
+      request<ResponseType, RequestType>({
+        ...config,
+        method: 'PUT',
+        url: endpoint,
+        data,
+      }),
   };
 };

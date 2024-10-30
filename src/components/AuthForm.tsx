@@ -11,7 +11,6 @@ const AuthForm = ({ type, errors }: AuthFormProps) => {
   const title = isLogin ? 'Sign in' : 'Sign up';
   const switchText = isLogin ? 'Need an account?' : 'Have an account?';
   const switchLink = isLogin ? '/register' : '/login';
-  console.log(errors);
 
   return (
     <div className="auth-page">

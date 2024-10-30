@@ -16,4 +16,12 @@ export const authService = {
       },
     });
   },
+
+  updateUser: (data: UpdateUserRequest, token: string) => {
+    return apiClient.put<UpdateUserResponse, UpdateUserRequest>('/user', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
 };

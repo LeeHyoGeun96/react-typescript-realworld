@@ -37,3 +37,15 @@ interface ErrorResponse {
 interface ValidationErrors {
   [key: string]: string[];
 }
+
+interface UpdateUserRequest {
+  user: {
+    email?: string;
+    password?: string;
+    username?: string;
+    bio?: string;
+    image?: string;
+  };
+}
+
+type UpdateUserResponse = User;
