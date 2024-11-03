@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useBoundStore } from '../store';
 import { authService } from '../services/auth.service';
 import NetworkError from '../errors/NetworkError';
+import { UpdateUserRequest } from '../types/authTypes';
+import { ErrorDisplay } from '../components/ErrorDisplay';
 
 interface SettingsPageProps {}
 
@@ -17,17 +19,13 @@ const SettingsPage = ({}: SettingsPageProps) => {
     },
     onError: (error) => {
       if (NetworkError.isNetworkError(error)) {
-        if (error.code === 422 || error.code === 403) {
-          return (
-            error.errors || { 'email or password': ['Invalid credentials'] }
-          );
-        }
+        return error;
       }
       throw error;
     },
   });
   const navigate = useNavigate();
-  const { mutate: updateUser, error, isPending } = updateUserMutation;
+  const { mutate: updateUser, error: errors, isPending } = updateUserMutation;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -79,14 +77,7 @@ const SettingsPage = ({}: SettingsPageProps) => {
         <div className="row">
           <div className="col-md-6 offset-md-3 col-xs-12">
             <h1 className="text-xs-center">Your Settings</h1>
-
-            <ul className="error-messages">
-              {error &&
-                Object.entries(error).map(([key, value]) => (
-                  <li key={key}>{value.join(', ')}</li>
-                ))}
-            </ul>
-
+            <ErrorDisplay errors={errors} />
             <form onSubmit={handleSubmit}>
               <fieldset>
                 <fieldset className="form-group">

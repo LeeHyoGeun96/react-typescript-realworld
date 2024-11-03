@@ -1,6 +1,7 @@
+import { ValidationErrors } from '../types/authTypes';
+
 class NetworkError extends Error {
   code: number;
-  statusText: string;
   errors?: ValidationErrors;
 
   static errorMessages: Record<number, string> = {
@@ -18,19 +19,17 @@ class NetworkError extends Error {
   constructor({
     code,
     message,
-    statusText,
     errors,
   }: {
     code: number;
     message: string;
-    statusText: string;
     errors?: ValidationErrors;
   }) {
+    // errorMessages에 정의된 코드가 없을 경우 기본 message 사용
     const errorMessage = NetworkError.errorMessages[code] || message;
     super(errorMessage);
     this.name = 'NetworkError';
     this.code = code;
-    this.statusText = statusText;
     this.errors = errors;
   }
 
