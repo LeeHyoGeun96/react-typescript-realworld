@@ -1,26 +1,74 @@
+import { useQuery } from '@tanstack/react-query';
+import { Link, useParams } from 'react-router-dom';
+import { profileQueryOptions } from '../queryOptions/profileQueryOptions';
+import NetworkError from '../errors/NetworkError';
+import { useBoundStore } from '../store';
+
 interface ProfilePageProps {}
 
 const ProfilePage = ({}: ProfilePageProps) => {
+  const token = useBoundStore((state) => state.token);
+
+  const username = useParams().username;
+
+  if (!username) {
+    return null;
+  }
+  const { data, isPending, error } = useQuery({
+    ...profileQueryOptions.getProfile({ username, token: token ?? undefined }),
+  });
+
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    if (error instanceof NetworkError) {
+      let message = '';
+      if (error.code === 404) {
+        message = 'Profile not found';
+      }
+      return (
+        <>
+          <h2>Sorry.. there was an error</h2>
+          <p>{error.code}</p>
+          <p>{message}</p>
+        </>
+      );
+    }
+    throw error;
+  }
+
+  console.log(data);
+
   return (
     <div className="profile-page">
       <div className="user-info">
         <div className="container">
           <div className="row">
             <div className="col-xs-12 col-md-10 offset-md-1">
-              <img src="http://i.imgur.com/Qr71crq.jpg" className="user-img" />
-              <h4>Eric Simons</h4>
-              <p>
-                Cofounder @GoThinkster, lived in Aol's HQ for a few months,
-                kinda looks like Peeta from the Hunger Games
-              </p>
-              <button className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-plus-round"></i>
-                &nbsp; Follow Eric Simons
-              </button>
-              <button className="btn btn-sm btn-outline-secondary action-btn">
-                <i className="ion-gear-a"></i>
-                &nbsp; Edit Profile Settings
-              </button>
+              <img
+                src={data?.profile.image ?? ''}
+                className="user-img"
+                alt={`${data?.profile.username ?? ''} profile`}
+              />
+              <h4>{data?.profile.username ?? ''}</h4>
+              <p>{data?.profile.bio ?? ''}</p>
+              {data?.profile.isCurrentUser ? (
+                <Link
+                  to="/settings"
+                  className="btn btn-sm btn-outline-secondary action-btn"
+                >
+                  <i className="ion-gear-a"></i>
+                  &nbsp; Edit Profile Settings
+                </Link>
+              ) : (
+                <button className="btn btn-sm btn-outline-secondary action-btn">
+                  <i className="ion-plus-round"></i>
+                  &nbsp; {data?.profile.following ? 'Unfollow' : 'Follow'}{' '}
+                  {data?.profile.username}
+                </button>
+              )}
             </div>
           </div>
         </div>
