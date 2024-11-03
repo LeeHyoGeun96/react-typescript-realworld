@@ -16,6 +16,7 @@ import RootPage, { loader as rootLoader } from './routes/root.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorPage from './routes/error.tsx';
+import ErrorBoundary from './components/ErrorBoundary.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {},
@@ -93,8 +94,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root') as HTMLElement).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );
