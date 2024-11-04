@@ -46,7 +46,7 @@ export const createApi = (url: string) => {
     },
   );
 
-  const request = async <ResponseType, RequestType = undefined>(
+  const request = async <ResponseType, RequestType = void>(
     config: AxiosRequestConfig & { data?: RequestType },
   ): Promise<ResponseType> => {
     const response: AxiosResponse<ResponseType> = await instance(config);
@@ -54,8 +54,11 @@ export const createApi = (url: string) => {
   };
 
   return {
-    get: <ResponseType>(endpoint: string, config?: AxiosRequestConfig) =>
-      request<ResponseType>({
+    get: <ResponseType, RequestType>(
+      endpoint: string,
+      config?: AxiosRequestConfig,
+    ) =>
+      request<ResponseType, RequestType>({
         ...config,
         method: 'GET',
         url: endpoint,
@@ -71,8 +74,11 @@ export const createApi = (url: string) => {
         url: endpoint,
         data,
       }),
-    delete: <ResponseType>(endpoint: string, config?: AxiosRequestConfig) =>
-      request<ResponseType>({
+    delete: <ResponseType, RequestType>(
+      endpoint: string,
+      config?: AxiosRequestConfig,
+    ) =>
+      request<ResponseType, RequestType>({
         ...config,
         method: 'DELETE',
         url: endpoint,

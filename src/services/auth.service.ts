@@ -19,7 +19,7 @@ export const authService = {
   },
 
   getCurrentUser: (token: string) => {
-    return apiClient.get<User>('/user', {
+    return apiClient.get<User, void>('/user', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
