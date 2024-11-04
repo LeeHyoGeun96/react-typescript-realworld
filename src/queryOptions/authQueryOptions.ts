@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import { authService } from '../services/auth';
+import { authService } from '../services/auth.service';
+import { SignupRequest, LoginRequest } from '../types/authTypes';
 
 export const authQueryOptions = {
   signup: (data: SignupRequest) =>

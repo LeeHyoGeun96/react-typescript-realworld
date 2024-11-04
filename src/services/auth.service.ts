@@ -1,4 +1,13 @@
 import { apiClient } from '../util/api';
+import {
+  SignupRequest,
+  SignupResponse,
+  LoginRequest,
+  LoginResponse,
+  UpdateUserRequest,
+  UpdateUserResponse,
+  User,
+} from '../types/authTypes';
 
 export const authService = {
   signUp: (data: SignupRequest) => {
@@ -10,7 +19,15 @@ export const authService = {
   },
 
   getCurrentUser: (token: string) => {
-    return apiClient.get<User>('/user', {
+    return apiClient.get<User, void>('/user', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+
+  updateUser: (data: UpdateUserRequest, token: string) => {
+    return apiClient.put<UpdateUserResponse, UpdateUserRequest>('/user', data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

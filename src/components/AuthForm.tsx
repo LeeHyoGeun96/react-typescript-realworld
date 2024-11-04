@@ -1,8 +1,10 @@
 import { Form } from 'react-router-dom';
+import NetworkError from '../errors/NetworkError';
+import { ErrorDisplay } from './ErrorDisplay';
 
 interface AuthFormProps {
   type: 'login' | 'register';
-  errors?: ValidationErrors;
+  errors?: NetworkError;
   onSubmit?: (data: FormData) => void;
 }
 
@@ -11,7 +13,6 @@ const AuthForm = ({ type, errors }: AuthFormProps) => {
   const title = isLogin ? 'Sign in' : 'Sign up';
   const switchText = isLogin ? 'Need an account?' : 'Have an account?';
   const switchLink = isLogin ? '/register' : '/login';
-  console.log(errors);
 
   return (
     <div className="auth-page">
@@ -23,20 +24,7 @@ const AuthForm = ({ type, errors }: AuthFormProps) => {
               <a href={switchLink}>{switchText}</a>
             </p>
 
-            {errors && (
-              <ul className="error-messages">
-                {Object.entries(errors).map(([field, messages]) => (
-                  <li key={field}>
-                    <strong>{field}:</strong>
-                    <ul>
-                      {messages.map((message, index) => (
-                        <li key={index}>{message}</li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <ErrorDisplay errors={errors} />
             <Form method="post">
               {!isLogin && (
                 <fieldset className="form-group">

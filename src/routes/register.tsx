@@ -3,6 +3,7 @@ import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
 import NetworkError from '../errors/NetworkError';
 import AuthForm from '../components/AuthForm';
 import { authQueryOptions } from '../queryOptions/authQueryOptions';
+import { SignupFormDataType } from '../types/authTypes';
 
 export const action =
   (queryClient: QueryClient) =>
@@ -27,10 +28,7 @@ export const action =
       return redirect('/login');
     } catch (error) {
       if (NetworkError.isNetworkError(error)) {
-        if (error.code === 422 || error.code === 403) {
-          console.log(error.errors);
-          return error.errors;
-        }
+        return error;
       }
       throw error;
     }
@@ -39,7 +37,7 @@ export const action =
 interface RegisterPageProps {}
 
 const RegisterPage = ({}: RegisterPageProps) => {
-  const errors = useActionData() as ValidationErrors | undefined;
+  const errors = useActionData() as NetworkError | undefined;
   console.log(errors);
 
   return <AuthForm type="register" errors={errors} />;

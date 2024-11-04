@@ -28,20 +28,16 @@ export const action =
     } catch (error) {
       console.dir(error);
       if (NetworkError.isNetworkError(error)) {
-        if (error.code === 422 || error.code === 403) {
-          return (
-            error.errors || { 'email or password': ['Invalid credentials'] }
-          );
-        }
+        return error;
       }
-      throw error;
+      throw error; // 예상하지 못한 에러는 다시 던짐
     }
   };
 
 interface LoginPageProps {}
 
 const LoginPage = ({}: LoginPageProps) => {
-  const errors = useActionData() as ValidationErrors | undefined;
+  const errors = useActionData() as NetworkError | undefined;
 
   return <AuthForm type="login" errors={errors} />;
 };
