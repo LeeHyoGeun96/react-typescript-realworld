@@ -1,21 +1,23 @@
 import { apiClient } from '../util/api';
 import {
-  SignupRequest,
   SignupResponse,
-  LoginRequest,
   LoginResponse,
   UpdateUserRequest,
   UpdateUserResponse,
   User,
+  SignupDTO,
+  SignupParams,
+  LoginRequestParams,
+  LoginDTO,
 } from '../types/authTypes';
 
 export const authService = {
-  signUp: (data: SignupRequest) => {
-    return apiClient.post<SignupResponse, SignupRequest>('/users', data);
+  signUp: (data: SignupParams) => {
+    return apiClient.post<SignupResponse, SignupDTO>('/users', data);
   },
 
-  login: (data: LoginRequest) => {
-    return apiClient.post<LoginResponse, LoginRequest>('/users/login', data);
+  login: (data: LoginRequestParams) => {
+    return apiClient.post<LoginResponse, LoginDTO>('/users/login', data);
   },
 
   getCurrentUser: (token: string) => {

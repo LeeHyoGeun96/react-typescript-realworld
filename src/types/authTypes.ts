@@ -8,12 +8,14 @@ export interface User {
   };
 }
 
-export interface LoginRequest {
+export interface LoginRequestParams {
   user: {
     email: string;
     password: string;
   };
 }
+
+export type LoginDTO = LoginRequestParams;
 
 export type LoginResponse = User;
 
@@ -22,9 +24,9 @@ export interface SignupFormDataType {
   email: string;
   password: string;
 }
-export interface SignupRequest {
-  user: SignupFormDataType;
-}
+export type SignupDTO = SignupFormDataType;
+
+export type SignupParams = SignupFormDataType;
 
 export type SignupResponse = User;
 
