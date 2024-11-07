@@ -2,9 +2,12 @@ import {
   CreateArticleDTO,
   CreateArticleRequestParams,
   CreateArticleResponse,
-  GetUniqueArticleDTO,
+  DeleteArticleRequestParams,
   GetUniqueArticleRequestParams,
   GetUniqueArticleResponse,
+  UpdateArticleDTO,
+  UpdateArticleRequestParams,
+  UpdateArticleResponse,
 } from '../types/articleTypes';
 import { apiClient } from '../util/api';
 
@@ -23,11 +26,26 @@ export const articleService = {
 
   getUniqueArticle: ({ slug, token }: GetUniqueArticleRequestParams) => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return apiClient.get<GetUniqueArticleResponse, GetUniqueArticleDTO>(
+    return apiClient.get<GetUniqueArticleResponse, void>(`/articles/${slug}`, {
+      headers,
+    });
+  },
+
+  updateArticle: ({ slug, article, token }: UpdateArticleRequestParams) => {
+    return apiClient.put<UpdateArticleResponse, UpdateArticleDTO>(
       `/articles/${slug}`,
+      { article },
       {
-        headers,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
     );
+  },
+
+  deleteArticle: ({ slug, token }: DeleteArticleRequestParams) => {
+    return apiClient.delete<void, void>(`/articles/${slug}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
   },
 };

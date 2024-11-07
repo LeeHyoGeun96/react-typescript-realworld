@@ -6,8 +6,9 @@ import {
   Form,
   LoaderFunctionArgs,
   redirect,
-  useActionData,
   useLoaderData,
+  useParams,
+  useSubmit,
 } from 'react-router-dom';
 import {articleService} from '../services/article.service';
 import {useBoundStore} from '../store';
@@ -15,34 +16,39 @@ import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {ErrorDisplay} from '../components/ErrorDisplay';
 import {Article} from '../types/articleTypes';
+import {deepEqual} from '../util/deepEqual';
 
 export const loader =
   (queryClient: QueryClient) =>
   async ({params}: LoaderFunctionArgs) => {
     if (!params.slug) {
-      return {
-        article: null,
-        error: new NetworkError({code: 404, message: 'slug가 필요합니다.'}),
-      };
+      return new NetworkError({code: 404, message: 'slug가 필요합니다.'});
     }
 
     const token = useBoundStore.getState().token;
 
     if (!token) {
-      return {
-        article: null,
-        error: new NetworkError({code: 401, message: '로그인이 필요합니다.'}),
-      };
+      return new NetworkError({code: 401, message: '로그인이 필요합니다.'});
     }
 
     try {
       const response = await queryClient.fetchQuery(
         articleQueryOptions.getArticle({slug: params.slug, token}),
       );
-      return {article: response, error: null};
+
+      const article = response.article;
+
+      if (Object.keys(article.author).length === 0) {
+        return new NetworkError({
+          code: 404,
+          message: '게시글을 찾을 수 없습니다.',
+        });
+      }
+
+      return article;
     } catch (error) {
       if (NetworkError.isNetworkError(error)) {
-        return {article: null, error};
+        return error;
       }
       throw error;
     }
@@ -96,30 +102,69 @@ export const action =
 interface EditorPageProps {}
 
 const EditorPage = ({}: EditorPageProps) => {
-  const loaderData = useLoaderData() as {
-    article?: Article;
-    error?: NetworkError;
-  } | null;
-  const {tags, addTag, removeTag} = useTagInput(loaderData?.article?.tagList);
-  const actionError = useActionData() as NetworkError;
+  const {slug} = useParams();
+  const loaderData = slug ? (useLoaderData() as Article) : null;
+  const submit = useSubmit();
 
-  const error = actionError || loaderData?.error;
+  if (loaderData instanceof NetworkError) {
+    return (
+      <div className="editor-page">
+        <div className="container page">
+          <ErrorDisplay errors={loaderData} />
+        </div>
+      </div>
+    );
+  }
+
+  const article = loaderData || {
+    title: '',
+    description: '',
+    body: '',
+    tagList: [],
+  };
+
+  const {tags, addTag, removeTag} = useTagInput(article.tagList);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const articleData = {
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      body: formData.get('body') as string,
+      tagList: JSON.parse(formData.get('tagList') as string),
+    };
+
+    const isNotChanged = deepEqual(articleData, loaderData, [
+      'title',
+      'description',
+      'body',
+      'tagList',
+    ]);
+
+    if (isNotChanged) {
+      console.log('변경사항이 있어야 합니다');
+      return;
+    }
+
+    submit(formData, {
+      method: 'post',
+    });
+  };
 
   return (
     <div className="editor-page">
       <div className="container page">
         <div className="row">
           <div className="col-md-10 offset-md-1 col-xs-12">
-            <ErrorDisplay errors={error} />
-
-            <Form method="post">
+            <Form method="post" onSubmit={handleSubmit}>
               <fieldset>
                 <fieldset className="form-group">
                   <input
                     type="text"
                     className="form-control form-control-lg"
                     placeholder="Article Title"
-                    defaultValue={loaderData?.article?.title}
+                    defaultValue={article.title}
                     name="title"
                   />
                 </fieldset>
@@ -128,7 +173,7 @@ const EditorPage = ({}: EditorPageProps) => {
                     type="text"
                     className="form-control"
                     placeholder="What's this article about?"
-                    defaultValue={loaderData?.article?.description}
+                    defaultValue={article.description}
                     name="description"
                   />
                 </fieldset>
@@ -137,7 +182,7 @@ const EditorPage = ({}: EditorPageProps) => {
                     className="form-control"
                     rows={8}
                     placeholder="Write your article (in markdown)"
-                    defaultValue={loaderData?.article?.body}
+                    defaultValue={article.body}
                     name="body"
                   ></textarea>
                 </fieldset>

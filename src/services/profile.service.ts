@@ -1,22 +1,22 @@
 import {
-  FollowUserRequest,
+  FollowUserRequestParams,
   FollowUserResponse,
-  GetProfileRequest,
+  GetProfileRequestParams,
   GetProfileResponse,
-  UnfollowUserRequest,
+  UnfollowUserRequestParams,
   UnfollowUserResponse,
 } from '../types/profileTypes';
 import { apiClient } from '../util/api';
 
 export const profileService = {
-  getProfile: ({ username, token }: GetProfileRequest) => {
+  getProfile: ({ username, token }: GetProfileRequestParams) => {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     return apiClient.get<GetProfileResponse, void>(`/profiles/${username}`, {
       headers,
     });
   },
 
-  followUser: ({ username, token }: FollowUserRequest) => {
+  followUser: ({ username, token }: FollowUserRequestParams) => {
     const headers = { Authorization: `Bearer ${token}` };
     return apiClient.post<FollowUserResponse, void>(
       `/profiles/${username}/follow`,
@@ -25,7 +25,7 @@ export const profileService = {
     );
   },
 
-  unfollowUser: ({ username, token }: UnfollowUserRequest) => {
+  unfollowUser: ({ username, token }: UnfollowUserRequestParams) => {
     const headers = { Authorization: `Bearer ${token}` };
     return apiClient.delete<UnfollowUserResponse, void>(
       `/profiles/${username}/follow`,

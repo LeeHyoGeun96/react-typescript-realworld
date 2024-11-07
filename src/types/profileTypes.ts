@@ -1,6 +1,6 @@
 import { ProfileType } from './global';
 
-export interface GetProfileRequest {
+export interface GetProfileRequestParams {
   username: string;
   token?: string;
 }
@@ -9,7 +9,7 @@ export interface GetProfileResponse {
   profile: ProfileType;
 }
 
-export interface FollowUserRequest {
+export interface FollowUserRequestParams {
   username: string;
   token: string;
 }
@@ -18,7 +18,7 @@ export interface FollowUserResponse {
   profile: ProfileType;
 }
 
-export interface UnfollowUserRequest {
+export interface UnfollowUserRequestParams {
   username: string;
   token: string;
 }
