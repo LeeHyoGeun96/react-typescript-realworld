@@ -18,7 +18,10 @@ export const action =
     };
 
     if (!signUpData.username || !signUpData.email || !signUpData.password) {
-      return { errors: ['All fields are required'] };
+      return new NetworkError({
+        code: 400,
+        message: '모든 필드는 필수입니다.',
+      });
     }
 
     try {

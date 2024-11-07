@@ -11,7 +11,10 @@ export const action =
     const formData = await request.formData();
     const loginFn = useBoundStore.getState().login;
     if (!formData.get('email') || !formData.get('password')) {
-      return { errors: { 'email or password': ['All fields are required'] } };
+      return new NetworkError({
+        code: 400,
+        message: '이메일과 비밀번호는 필수입니다.',
+      });
     }
 
     const email = formData.get('email') as string;
