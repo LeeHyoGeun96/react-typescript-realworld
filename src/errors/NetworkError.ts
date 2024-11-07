@@ -22,11 +22,14 @@ class NetworkError extends Error {
     errors,
   }: {
     code: number;
-    message: string;
+    message?: string;
     errors?: ValidationErrors;
   }) {
     // errorMessages에 정의된 코드가 없을 경우 기본 message 사용
-    const errorMessage = NetworkError.errorMessages[code] || message;
+    const errorMessage =
+      message ||
+      NetworkError.errorMessages[code] ||
+      '알 수 없는 오류가 발생했습니다.';
     super(errorMessage);
     this.name = 'NetworkError';
     this.code = code;

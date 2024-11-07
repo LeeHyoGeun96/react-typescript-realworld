@@ -1,6 +1,6 @@
-import { create, StateCreator } from 'zustand';
+import {create, StateCreator} from 'zustand';
 
-interface User {
+export interface CurrentUserType {
   username: string | null;
   email: string | null;
   bio: string | null;
@@ -9,12 +9,12 @@ interface User {
 
 interface State {
   isLoggedIn: boolean;
-  user: User | null;
+  user: CurrentUserType | null;
   token: string | null;
 }
 
 interface Actions {
-  login: (user: User, token: string) => void;
+  login: (user: CurrentUserType, token: string) => void;
   logout: () => void;
 }
 
@@ -28,14 +28,14 @@ export interface UserSlice extends State, Actions {}
 
 export const useUserStore = create<UserSlice>((set) => ({
   ...initialState,
-  login: (user, token) => set({ isLoggedIn: true, user, token }),
-  logout: () => set({ ...initialState }),
+  login: (user, token) => set({isLoggedIn: true, user, token}),
+  logout: () => set({...initialState}),
 }));
 
 export const createUserSlice: StateCreator<UserSlice, [], [], UserSlice> = (
   set,
 ) => ({
   ...initialState,
-  login: (user, token) => set({ isLoggedIn: true, user, token }),
-  logout: () => set({ ...initialState }),
+  login: (user, token) => set({isLoggedIn: true, user, token}),
+  logout: () => set({...initialState}),
 });

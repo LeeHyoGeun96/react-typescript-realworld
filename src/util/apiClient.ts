@@ -7,8 +7,14 @@ import axios, {
 import NetworkError from '../errors/NetworkError';
 import { ValidationErrors } from '../types/authTypes';
 
-interface ErrorResponse {
+// API 에러 응답 DTO
+interface ErrorResponseType {
   errors: ValidationErrors;
+}
+
+// API 설정 타입
+interface ApiConfig extends AxiosRequestConfig {
+  token?: string;
 }
 
 export const createApi = (url: string) => {
@@ -24,20 +30,18 @@ export const createApi = (url: string) => {
     (error: AxiosError) => {
       if (error.response) {
         const { status, data } = error.response;
-        const errorData = data as ErrorResponse | undefined;
+        const errorData = data as ErrorResponseType | undefined;
         throw new NetworkError({
           code: status,
           message: error.message || '서버 오류가 발생했습니다.',
           errors: errorData?.errors,
         });
       } else if (error.request) {
-        // 요청은 보냈지만 응답을 받지 못한 경우
         throw new NetworkError({
           code: 0,
           message: '서버로부터 응답을 받지 못했습니다.',
         });
       } else {
-        // 요청 설정 중 오류가 발생한 경우
         throw new NetworkError({
           code: 0,
           message: '요청을 보내는 중 오류가 발생했습니다.',
@@ -46,61 +50,71 @@ export const createApi = (url: string) => {
     },
   );
 
-  const request = async <ResponseType, RequestType = void>(
-    config: AxiosRequestConfig & { data?: RequestType },
+  const request = async <ResponseType, RequestDTO = void>(
+    config: ApiConfig & { data?: RequestDTO },
   ): Promise<ResponseType> => {
+    if (config.token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${config.token}`,
+      };
+    }
+
     const response: AxiosResponse<ResponseType> = await instance(config);
     return response.data;
   };
 
   return {
-    get: <ResponseType, RequestType>(
+    get: <ResponseType, RequestDTO = void>(
       endpoint: string,
-      config?: AxiosRequestConfig,
+      config?: ApiConfig,
     ) =>
-      request<ResponseType, RequestType>({
+      request<ResponseType, RequestDTO>({
         ...config,
         method: 'GET',
         url: endpoint,
       }),
-    post: <ResponseType, RequestType>(
+
+    post: <ResponseType, RequestDTO>(
       endpoint: string,
-      data?: RequestType,
-      config?: AxiosRequestConfig,
+      data?: RequestDTO,
+      config?: ApiConfig,
     ) =>
-      request<ResponseType, RequestType>({
+      request<ResponseType, RequestDTO>({
         ...config,
         method: 'POST',
         url: endpoint,
         data,
       }),
-    delete: <ResponseType, RequestType>(
+
+    delete: <ResponseType, RequestDTO = void>(
       endpoint: string,
-      config?: AxiosRequestConfig,
+      config?: ApiConfig,
     ) =>
-      request<ResponseType, RequestType>({
+      request<ResponseType, RequestDTO>({
         ...config,
         method: 'DELETE',
         url: endpoint,
       }),
 
-    patch: <ResponseType, RequestType>(
+    patch: <ResponseType, RequestDTO>(
       endpoint: string,
-      data?: RequestType,
-      config?: AxiosRequestConfig,
+      data?: RequestDTO,
+      config?: ApiConfig,
     ) =>
-      request<ResponseType, RequestType>({
+      request<ResponseType, RequestDTO>({
         ...config,
         method: 'PATCH',
         url: endpoint,
         data,
       }),
-    put: <ResponseType, RequestType>(
+
+    put: <ResponseType, RequestDTO>(
       endpoint: string,
-      data?: RequestType,
-      config?: AxiosRequestConfig,
+      data?: RequestDTO,
+      config?: ApiConfig,
     ) =>
-      request<ResponseType, RequestType>({
+      request<ResponseType, RequestDTO>({
         ...config,
         method: 'PUT',
         url: endpoint,

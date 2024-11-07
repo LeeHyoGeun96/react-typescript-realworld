@@ -7,6 +7,7 @@ interface ErrorDisplayProps {
 
 export const ErrorDisplay = ({ errors }: ErrorDisplayProps) => {
   if (!errors) return null;
+  console.error(errors);
 
   return (
     <>
