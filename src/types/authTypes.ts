@@ -26,7 +26,7 @@ export interface SignupFormDataType {
 }
 export type SignupDTO = SignupFormDataType;
 
-export type SignupParams = SignupFormDataType;
+export type SignupRequestParams = SignupFormDataType;
 
 export type SignupResponse = User;
 
