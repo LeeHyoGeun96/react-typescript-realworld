@@ -6,6 +6,7 @@ import {
   Form,
   LoaderFunctionArgs,
   redirect,
+  useActionData,
   useLoaderData,
   useParams,
   useSubmit,
@@ -17,6 +18,7 @@ import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {ErrorDisplay} from '../components/ErrorDisplay';
 import {Article} from '../types/articleTypes';
 import {deepEqual} from '../util/deepEqual';
+import {useEffect, useState} from 'react';
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -104,17 +106,16 @@ interface EditorPageProps {}
 const EditorPage = ({}: EditorPageProps) => {
   const {slug} = useParams();
   const loaderData = slug ? (useLoaderData() as Article) : null;
+  const actionData = useActionData() as NetworkError | undefined;
+  const [error, setError] = useState<NetworkError | undefined>(undefined);
   const submit = useSubmit();
 
-  if (loaderData instanceof NetworkError) {
-    return (
-      <div className="editor-page">
-        <div className="container page">
-          <ErrorDisplay errors={loaderData} />
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const loaderError = NetworkError.isNetworkError(loaderData)
+      ? loaderData
+      : undefined;
+    setError(actionData || loaderError);
+  }, [actionData, loaderData]);
 
   const article = loaderData || {
     title: '',
@@ -157,6 +158,7 @@ const EditorPage = ({}: EditorPageProps) => {
       <div className="container page">
         <div className="row">
           <div className="col-md-10 offset-md-1 col-xs-12">
+            {error && <ErrorDisplay errors={error} />}
             <Form method="post" onSubmit={handleSubmit}>
               <fieldset>
                 <fieldset className="form-group">
