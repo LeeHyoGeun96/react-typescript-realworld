@@ -5,7 +5,7 @@ import axios, {
   AxiosResponse,
 } from 'axios';
 import NetworkError from '../errors/NetworkError';
-import { ValidationErrors } from '../types/authTypes';
+import {ValidationErrors} from '../types/authTypes';
 
 // API 에러 응답 DTO
 interface ErrorResponseType {
@@ -27,21 +27,24 @@ export const createApi = (url: string) => {
 
   instance.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+    (error: AxiosError<ErrorResponseType>) => {
+      console.log('Error interceptor:', error.response?.data); // 디버깅용
+
       if (error.response) {
-        const { status, data } = error.response;
-        const errorData = data as ErrorResponseType | undefined;
+        const {status, data} = error.response;
         throw new NetworkError({
           code: status,
           message: error.message || '서버 오류가 발생했습니다.',
-          errors: errorData?.errors,
+          errors: data.errors, // data.errors를 직접 사용
         });
       } else if (error.request) {
+        console.log('Request error:', error.request); // 디버깅용
         throw new NetworkError({
           code: 0,
           message: '서버로부터 응답을 받지 못했습니다.',
         });
       } else {
+        console.log('Error setup:', error.message); // 디버깅용
         throw new NetworkError({
           code: 0,
           message: '요청을 보내는 중 오류가 발생했습니다.',
@@ -51,7 +54,7 @@ export const createApi = (url: string) => {
   );
 
   const request = async <ResponseType, RequestDTO = void>(
-    config: ApiConfig & { data?: RequestDTO },
+    config: ApiConfig & {data?: RequestDTO},
   ): Promise<ResponseType> => {
     if (config.token) {
       config.headers = {
