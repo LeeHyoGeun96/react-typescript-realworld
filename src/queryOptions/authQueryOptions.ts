@@ -1,9 +1,9 @@
-import { queryOptions } from '@tanstack/react-query';
-import { authService } from '../services/auth.service';
-import { SignupRequest, LoginRequest } from '../types/authTypes';
+import {queryOptions} from '@tanstack/react-query';
+import {authService} from '../services/auth.service';
+import {SignupRequestParams, LoginRequestParams} from '../types/authTypes';
 
 export const authQueryOptions = {
-  signup: (data: SignupRequest) =>
+  signup: (data: SignupRequestParams) =>
     queryOptions({
       queryKey: ['auth', 'signup'],
       queryFn: () => authService.signUp(data),
@@ -11,7 +11,7 @@ export const authQueryOptions = {
       gcTime: 0,
     }),
 
-  login: (data: LoginRequest) =>
+  login: (data: LoginRequestParams) =>
     queryOptions({
       queryKey: ['auth', 'login'],
       queryFn: () => authService.login(data),
