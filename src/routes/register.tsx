@@ -1,13 +1,13 @@
-import { QueryClient } from '@tanstack/react-query';
-import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
+import {QueryClient} from '@tanstack/react-query';
+import {ActionFunctionArgs, redirect, useActionData} from 'react-router-dom';
 import NetworkError from '../errors/NetworkError';
 import AuthForm from '../components/AuthForm';
-import { authQueryOptions } from '../queryOptions/authQueryOptions';
-import { SignupFormDataType } from '../types/authTypes';
+import {authQueryOptions} from '../queryOptions/authQueryOptions';
+import {SignupFormDataType} from '../types/authTypes';
 
 export const action =
   (queryClient: QueryClient) =>
-  async ({ request }: ActionFunctionArgs) => {
+  async ({request}: ActionFunctionArgs) => {
     const formData = await request.formData();
     const rawSignUpData = Object.fromEntries(formData);
 
@@ -25,9 +25,7 @@ export const action =
     }
 
     try {
-      await queryClient.fetchQuery(
-        authQueryOptions.signup({ user: signUpData }),
-      );
+      await queryClient.fetchQuery(authQueryOptions.signup(signUpData));
       return redirect('/login');
     } catch (error) {
       if (NetworkError.isNetworkError(error)) {
