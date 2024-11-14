@@ -1,17 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { useBoundStore } from '../store';
-import { authService } from '../services/auth.service';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {useNavigate} from 'react-router-dom';
+import {useBoundStore} from '../store';
+import {authService} from '../services/auth.service';
 import NetworkError from '../errors/NetworkError';
-import { UpdateUserRequest } from '../types/authTypes';
-import { ErrorDisplay } from '../components/ErrorDisplay';
+import {UpdateUserRequest} from '../types/authTypes';
+import {ErrorDisplay} from '../components/ErrorDisplay';
 
 interface SettingsPageProps {}
 
 const SettingsPage = ({}: SettingsPageProps) => {
   const user = useBoundStore.getState().user;
   const updateUserMutation = useMutation({
-    mutationFn: ({ data, token }: { data: UpdateUserRequest; token: string }) =>
+    mutationFn: ({data, token}: {data: UpdateUserRequest; token: string}) =>
       authService.updateUser(data, token),
     onSuccess: (data) => {
       useBoundStore.getState().login(data.user, data.user.token);
@@ -25,7 +25,7 @@ const SettingsPage = ({}: SettingsPageProps) => {
     },
   });
   const navigate = useNavigate();
-  const { mutate: updateUser, error: errors, isPending } = updateUserMutation;
+  const {mutate: updateUser, error: errors, isPending} = updateUserMutation;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,7 +54,7 @@ const SettingsPage = ({}: SettingsPageProps) => {
     }
 
     updateUser({
-      data: { user: data },
+      data: {user: data},
       token: token,
     });
   };
@@ -62,9 +62,9 @@ const SettingsPage = ({}: SettingsPageProps) => {
   const queryClient = useQueryClient();
 
   const handleLogout = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['auth'] });
     useBoundStore.getState().logout();
-    navigate('/', { replace: true });
+    await queryClient.invalidateQueries({queryKey: ['auth']});
+    navigate('/', {replace: true});
   };
 
   if (isPending) {
