@@ -1,4 +1,4 @@
-import {StrictMode} from 'react';
+import {StrictMode, Suspense} from 'react';
 import {createRoot} from 'react-dom/client';
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
@@ -91,7 +91,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile/:username',
-        element: <ProfilePage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProfilePage />
+          </Suspense>
+        ),
         children: [
           {
             index: true,

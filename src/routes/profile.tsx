@@ -1,43 +1,34 @@
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from '@tanstack/react-query';
 import {Link, useParams} from 'react-router-dom';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
-import NetworkError from '../errors/NetworkError';
 import {useBoundStore} from '../store';
 
-import {useEffect, useState} from 'react';
-import {ErrorDisplay} from '../components/ErrorDisplay';
 import {profileService} from '../services/profile.service';
 import {ProfileType} from '../types/global';
+import NetworkError from '../errors/NetworkError';
 
 interface ProfilePageProps {}
 
 const ProfilePage = ({}: ProfilePageProps) => {
   const token = useBoundStore((state) => state.token);
   const queryClient = useQueryClient();
-  const [error, setError] = useState<NetworkError | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const username = useParams().username;
 
-  const {
-    data,
-    isFetching: isGetProfileFetching,
-    error: getProfileError,
-  } = useQuery({
+  const {data} = useSuspenseQuery({
     ...profileQueryOptions.getProfile({
       username: username!,
       token: token ?? undefined,
     }),
-    enabled: !!username && !!token,
   });
   const loggedInUser = useBoundStore((state) => state.user);
   const isSameUser = loggedInUser?.username === username;
 
-  const {
-    mutate: followUser,
-    error: followUserError,
-    isPending: isFollowUserPending,
-  } = useMutation({
+  const {mutate: followUser} = useMutation({
     mutationFn: () =>
       profileService.followUser({
         username: username!,
@@ -71,11 +62,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
     },
   });
 
-  const {
-    mutate: unfollowUser,
-    error: unfollowUserError,
-    isPending: isUnfollowUserPending,
-  } = useMutation({
+  const {mutate: unfollowUser} = useMutation({
     mutationFn: () =>
       profileService.unfollowUser({
         username: username!,
@@ -109,26 +96,8 @@ const ProfilePage = ({}: ProfilePageProps) => {
     },
   });
 
-  useEffect(() => {
-    setError(getProfileError || followUserError || unfollowUserError);
-  }, [getProfileError, followUserError, unfollowUserError]);
-
-  useEffect(() => {
-    setIsLoading(
-      isGetProfileFetching || isFollowUserPending || isUnfollowUserPending,
-    );
-  }, [isGetProfileFetching, isFollowUserPending, isUnfollowUserPending]);
-
   if (!username || !token) {
-    return null;
-  }
-
-  if (error) {
-    return <ErrorDisplay errors={error} />;
-  }
-
-  if (isLoading) {
-    return <div>Loading...</div>;
+    throw new NetworkError({code: 401, message: 'Unauthorized'});
   }
 
   const handleFollowUser = () => {
