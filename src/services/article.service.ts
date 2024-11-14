@@ -14,6 +14,10 @@ import {
   AddCommentDTO,
   AddCommentResponse,
   DeleteCommentRequestParams,
+  ArticlesQueryRequestParams,
+  ArticlesResponse,
+  FeedQueryRequestParams,
+  FeedQueryResponse,
 } from '../types/articleTypes';
 import {apiClient} from '../util/api';
 
@@ -80,6 +84,28 @@ export const articleService = {
   deleteComment: ({slug, id, token}: DeleteCommentRequestParams) => {
     return apiClient.delete<void, void>(`/articles/${slug}/comments/${id}`, {
       headers: {Authorization: `Bearer ${token}`},
+    });
+  },
+
+  getArticles: ({
+    offset,
+    limit,
+    tag,
+    author,
+    favorited,
+    token,
+  }: ArticlesQueryRequestParams) => {
+    const headers = token ? {Authorization: `Bearer ${token}`} : {};
+    return apiClient.get<ArticlesResponse, void>(`/articles`, {
+      headers,
+      params: {offset, limit, tag, author, favorited},
+    });
+  },
+
+  getFeed: ({offset, limit, token}: FeedQueryRequestParams) => {
+    return apiClient.get<FeedQueryResponse, void>(`/articles/feed`, {
+      headers: {Authorization: `Bearer ${token}`},
+      params: {offset, limit},
     });
   },
 };

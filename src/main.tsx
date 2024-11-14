@@ -21,6 +21,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import ErrorPage from './routes/error.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import {action as deleteArticleAction} from './routes/deleteArticle';
+import {loader as pagenatedArticlesLoader} from './components/PagenatedAticles.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {},
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <IndexPage />,
+        loader: pagenatedArticlesLoader,
       },
       {
         path: '/login',
@@ -89,11 +91,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile/:username',
-        element: (
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        ),
+        element: <ProfilePage />,
         children: [
           {
             index: true,

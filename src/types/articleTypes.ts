@@ -140,3 +140,28 @@ export type DeleteCommentRequestParams = {
   id: number;
   token: string;
 };
+
+export type ArticlesQueryRequestParams = {
+  token?: string;
+  tag?: string;
+  author?: string;
+  favorited?: string;
+  offset: number;
+  limit: number;
+};
+
+export interface ArticlesResponse {
+  articles: Article[];
+  articlesCount: number;
+}
+
+export interface FeedQueryRequestParams {
+  offset: number;
+  limit: number;
+  token: string;
+}
+
+export interface FeedQueryResponse {
+  articles: Article[];
+  articlesCount: number;
+}
