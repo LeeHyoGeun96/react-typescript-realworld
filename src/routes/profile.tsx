@@ -1,13 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useParams } from 'react-router-dom';
-import { profileQueryOptions } from '../queryOptions/profileQueryOptions';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {Link, useParams} from 'react-router-dom';
+import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import NetworkError from '../errors/NetworkError';
-import { useBoundStore } from '../store';
+import {useBoundStore} from '../store';
 
-import { useEffect, useState } from 'react';
-import { ErrorDisplay } from '../components/ErrorDisplay';
-import { profileService } from '../services/profile.service';
-import { ProfileType } from '../types/global';
+import {useEffect, useState} from 'react';
+import {ErrorDisplay} from '../components/ErrorDisplay';
+import {profileService} from '../services/profile.service';
+import {ProfileType} from '../types/global';
 
 interface ProfilePageProps {}
 
@@ -30,6 +30,8 @@ const ProfilePage = ({}: ProfilePageProps) => {
     }),
     enabled: !!username && !!token,
   });
+  const loggedInUser = useBoundStore((state) => state.user);
+  const isSameUser = loggedInUser?.username === username;
 
   const {
     mutate: followUser,
@@ -52,7 +54,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
       }));
 
       // 롤백을 위해 이전 데이터 반환
-      return { previousProfile };
+      return {previousProfile};
     },
     onError: (_, __, context) => {
       // 에러 발생시 이전 데이터로 롤백
@@ -65,7 +67,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
     },
     onSettled: () => {
       // mutation 완료 후 프로필 데이터 갱신
-      queryClient.invalidateQueries({ queryKey: ['profile', username] });
+      queryClient.invalidateQueries({queryKey: ['profile', username]});
     },
   });
 
@@ -90,7 +92,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
       }));
 
       // 롤백을 위해 이전 데이터 반환
-      return { previousProfile };
+      return {previousProfile};
     },
     onError: (_, __, context) => {
       // 에러 발생시 이전 데이터로 롤백
@@ -103,7 +105,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
     },
     onSettled: () => {
       // mutation 완료 후 프로필 데이터 갱신
-      queryClient.invalidateQueries({ queryKey: ['profile', username] });
+      queryClient.invalidateQueries({queryKey: ['profile', username]});
     },
   });
 
@@ -184,7 +186,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
               <ul className="nav nav-pills outline-active">
                 <li className="nav-item">
                   <a className="nav-link active" href="">
-                    My Articles
+                    {isSameUser ? 'My' : `${data?.profile.username}'s`} Articles
                   </a>
                 </li>
                 <li className="nav-item">
