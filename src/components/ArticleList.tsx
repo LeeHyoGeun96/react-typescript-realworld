@@ -6,6 +6,10 @@ interface ArticleListProps {
 }
 
 const ArticleList = ({articles}: ArticleListProps) => {
+  if (articles.length === 0) {
+    return <div>데이터가 없습니다.</div>;
+  }
+
   return (
     <div className="article-preview">
       {articles.map((article) => (

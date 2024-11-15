@@ -4,6 +4,10 @@ interface SelectTagProps {
 }
 
 const SelectTag = ({tags, onTagClick}: SelectTagProps) => {
+  if (tags.length === 0) {
+    return null;
+  }
+
   return (
     <div className="col-md-3">
       <div className="sidebar">
