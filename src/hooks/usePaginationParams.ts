@@ -37,7 +37,7 @@ export const usePaginationParams = (itemsPerPage: number = 10) => {
   // 현재 상태는 필요할 때마다 직접 계산
   const currentState: PaginationResult = {
     page: Math.floor(Number(searchParams.get('offset') || 0) / itemsPerPage),
-    tab: searchParams.get('tab') as 'personal' | 'global',
+    tab: (searchParams.get('tab') as 'personal' | 'global') || 'global',
     tag: searchParams.get('tag') || undefined,
     author: searchParams.get('author') || undefined,
     offset: Math.floor(Number(searchParams.get('offset') || 0)),
