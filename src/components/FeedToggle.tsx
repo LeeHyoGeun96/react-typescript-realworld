@@ -6,7 +6,7 @@ interface FeedToggleProps {
     tag: string | undefined;
   };
   isLoggedIn: boolean;
-  onTabChange: (tab: string) => void;
+  onTabChange: (tab: 'global' | 'personal') => void;
   disabled?: boolean;
 }
 
@@ -17,7 +17,7 @@ const FeedToggle = ({params, isLoggedIn, onTabChange}: FeedToggleProps) => {
   const handleStateChange = (e: any) => {
     const tab = new URLSearchParams(e.currentTarget.getAttribute('to')).get(
       'tab',
-    );
+    ) as 'global' | 'personal';
     if (tab) onTabChange(tab);
   };
 

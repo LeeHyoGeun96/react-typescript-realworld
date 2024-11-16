@@ -165,3 +165,16 @@ export interface FeedQueryResponse {
   articles: Article[];
   articlesCount: number;
 }
+
+export interface FavoriteArticleRequestParams {
+  slug: string;
+  token: string;
+}
+
+export interface FavoriteArticleResponse {
+  article: Article;
+}
+
+export type UnfavoriteArticleRequestParams = FavoriteArticleRequestParams;
+
+export type UnfavoriteArticleResponse = FavoriteArticleResponse;
