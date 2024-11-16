@@ -9,12 +9,16 @@ import ArticleList from './ArticleList';
 import FeedToggle from './FeedToggle';
 import {ArticlesResponse} from '../types/articleTypes';
 import {usePaginationParams} from '../hooks/usePaginationParams';
+import {useFavoriteMutations} from '../hooks/useFavoriteMutations';
+import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
+import {useNavigate} from 'react-router-dom';
 
 interface PagenatedAticlesProps {}
 
 const ITEMS_PER_PAGE = 10;
 
 const PagenatedAticles = ({}: PagenatedAticlesProps) => {
+  const navigate = useNavigate();
   const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
   const token = useBoundStore((state) => state.token);
   const {currentState, setPage, setFilter} =
@@ -23,11 +27,13 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   const getFeedQueryOption =
     currentState.tab === 'personal' && token
       ? articleQueryOptions.getFeed({
-          offset: currentState.offset,
-          limit: ITEMS_PER_PAGE,
+          ...currentState,
           token: token,
         })
-      : articleQueryOptions.getArticles(currentState);
+      : articleQueryOptions.getArticles({
+          ...currentState,
+          token: token ?? undefined,
+        });
 
   const getTagsQueryOption = tagQueryOptions.getTags({
     token: token ?? undefined,
@@ -36,6 +42,45 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   const articlesQuery = useQuery<ArticlesResponse, NetworkError>(
     getFeedQueryOption,
   );
+
+  const favoriteMutations = token
+    ? useFavoriteMutations({
+        queryKey:
+          currentState.tab === 'personal' && token
+            ? QUERY_KEYS.articles.feed({
+                ...currentState,
+                token,
+              })
+            : QUERY_KEYS.articles.all({
+                ...currentState,
+                token,
+              }),
+        token,
+      })
+    : null;
+
+  const handleFavoriteArticle = (slug: string) => {
+    if (!favoriteMutations) {
+      const isConfirmed = window.confirm(
+        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
+      );
+      if (!isConfirmed) return;
+      return navigate('/login');
+    }
+    favoriteMutations.favoriteArticle.mutate(slug);
+  };
+
+  const handleUnfavoriteArticle = (slug: string) => {
+    if (!favoriteMutations) {
+      const isConfirmed = window.confirm(
+        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
+      );
+      if (!isConfirmed) return;
+      return navigate('/login');
+    }
+    favoriteMutations.unfavoriteArticle.mutate(slug);
+  };
+
   const {articles, articlesCount} = articlesQuery.data || {
     articles: [],
     articlesCount: 0,
@@ -62,11 +107,17 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   };
 
   const handleTagClick = (tag: string) => {
-    setFilter({tag});
+    setFilter({
+      ...currentState,
+      tag,
+    });
   };
 
-  const handleTabChange = (tab: string) => {
-    setFilter({tab});
+  const handleTabChange = (tab: 'global' | 'personal') => {
+    setFilter({
+      ...currentState,
+      tab,
+    });
   };
 
   return (
@@ -84,7 +135,12 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
             <div className="article-preview">Updating...</div>
           ) : null}
 
-          <ArticleList articles={articles} />
+          <ArticleList
+            articles={articles}
+            favoriteArticle={handleFavoriteArticle}
+            unfavoriteArticle={handleUnfavoriteArticle}
+            isPending={favoriteMutations?.isPending || false}
+          />
 
           <ReactPaginate
             pageCount={pageCount}

@@ -2,7 +2,7 @@ import {useSearchParams} from 'react-router-dom';
 
 interface PaginationState {
   page: number;
-  tab?: string;
+  tab: 'personal' | 'global';
   tag?: string;
   author?: string;
 }
@@ -37,7 +37,7 @@ export const usePaginationParams = (itemsPerPage: number = 10) => {
   // 현재 상태는 필요할 때마다 직접 계산
   const currentState: PaginationResult = {
     page: Math.floor(Number(searchParams.get('offset') || 0) / itemsPerPage),
-    tab: searchParams.get('tab') || 'global',
+    tab: searchParams.get('tab') as 'personal' | 'global',
     tag: searchParams.get('tag') || undefined,
     author: searchParams.get('author') || undefined,
     offset: Math.floor(Number(searchParams.get('offset') || 0)),
