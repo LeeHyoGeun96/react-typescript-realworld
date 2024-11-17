@@ -18,6 +18,11 @@ export const action =
       throw new NetworkError({code: 401, message: '인증이 필요합니다.'});
     }
 
+    const isConfirmed = window.confirm(
+      '정말로 삭제하시겠습니까? \n 삭제된 게시물은 복구할 수 없습니다.',
+    );
+    if (!isConfirmed) return redirect(`/article/${slug}`);
+
     try {
       await articleService.deleteArticle({slug, token});
 
