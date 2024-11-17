@@ -9,7 +9,7 @@ import ArticleList from './ArticleList';
 import FeedToggle from './FeedToggle';
 import {ArticlesResponse} from '../types/articleTypes';
 import {usePaginationParams} from '../hooks/usePaginationParams';
-import {useFavoriteMutations} from '../hooks/useFavoriteMutations';
+import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import {useNavigate} from 'react-router-dom';
 
@@ -44,7 +44,7 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   );
 
   const favoriteMutations = token
-    ? useFavoriteMutations({
+    ? useArticlesFavoriteMutations({
         queryKey:
           currentState.tab === 'personal' && token
             ? QUERY_KEYS.articles.feed({

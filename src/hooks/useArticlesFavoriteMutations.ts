@@ -8,15 +8,15 @@ type FeedQueryKey = ReturnType<typeof QUERY_KEYS.articles.feed>;
 
 type ArticleQueryKeyType = ArticlesQueryKey | FeedQueryKey;
 
-interface useFavoriteMutationsProps {
+interface useArticlesFavoriteMutationsProps {
   token: string;
   queryKey: ArticleQueryKeyType;
 }
 
-export const useFavoriteMutations = ({
+export const useArticlesFavoriteMutations = ({
   token,
   queryKey,
-}: useFavoriteMutationsProps) => {
+}: useArticlesFavoriteMutationsProps) => {
   const queryClient = useQueryClient();
 
   const favoriteArticle = useMutation({
@@ -42,7 +42,10 @@ export const useFavoriteMutations = ({
     },
     onError: (_, __, context) => {
       // 에러시 롤백
-      queryClient.setQueryData(['articles'], context?.previousData);
+      queryClient.setQueryData(queryKey, context?.previousData);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({queryKey: ['articles']});
     },
   });
 
@@ -68,7 +71,7 @@ export const useFavoriteMutations = ({
       return {previousData};
     },
     onError: (_, __, context) => {
-      queryClient.setQueryData(['articles'], context?.previousData);
+      queryClient.setQueryData(queryKey, context?.previousData);
     },
     onSettled: () => {
       queryClient.invalidateQueries({queryKey: ['articles']});

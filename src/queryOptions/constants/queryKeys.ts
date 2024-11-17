@@ -38,8 +38,17 @@ export const QUERY_KEYS = {
   },
   article: {
     detail: (slug: string, token?: string) =>
-      token ? ['article', slug, token] : (['article', slug] as const),
+      token
+        ? ['articles', 'article', slug, token]
+        : (['articles', 'article', slug] as const),
     comments: (slug: string, token?: string) =>
-      token ? ['comments', slug, token] : (['comments', slug] as const),
+      token
+        ? ['articles', 'comments', slug, token]
+        : (['articles', 'comments', slug] as const),
+  },
+  profile: {
+    root: ['profile'] as const,
+    getProfile: ({username, token}: {username: string; token?: string}) =>
+      token ? ['profile', username, token] : ['profile', username],
   },
 } as const;

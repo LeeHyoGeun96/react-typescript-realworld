@@ -13,9 +13,9 @@ import ReactPaginate from 'react-paginate';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {usePaginationParams} from '../hooks/usePaginationParams';
 import ArticleList from '../components/ArticleList';
-import {useFavoriteMutations} from '../hooks/useFavoriteMutations';
+import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
-import useFallowMutations from '../hooks/useFollowMutations';
+import useFollowMutations from '../hooks/useFollowMutations';
 
 interface ProfilePageProps {}
 
@@ -46,7 +46,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
   });
 
   const favoriteMutations = token
-    ? useFavoriteMutations({
+    ? useArticlesFavoriteMutations({
         queryKey: QUERY_KEYS.articles.all({
           ...currentState,
           token: token ?? undefined,
@@ -57,12 +57,15 @@ const ProfilePage = ({}: ProfilePageProps) => {
       })
     : null;
 
-  const fallowMutations =
+  const followMutations =
     token && username
-      ? useFallowMutations({
-          queryKey: QUERY_KEYS.profile.getProfile(username!, token),
+      ? useFollowMutations({
+          queryKey: QUERY_KEYS.profile.getProfile({
+            username,
+            token,
+          }),
           token,
-          username: username,
+          username,
         })
       : null;
 
@@ -89,25 +92,25 @@ const ProfilePage = ({}: ProfilePageProps) => {
   };
 
   const handleFollowUser = () => {
-    if (!fallowMutations) {
+    if (!followMutations) {
       const isConfirmed = window.confirm(
         '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
       );
       if (!isConfirmed) return;
       return navigate('/login');
     }
-    fallowMutations.followMutation.mutate();
+    followMutations.followMutation.mutate();
   };
 
   const handleUnfollowUser = () => {
-    if (!fallowMutations) {
+    if (!followMutations) {
       const isConfirmed = window.confirm(
         '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
       );
       if (!isConfirmed) return;
       return navigate('/login');
     }
-    fallowMutations.unfollowMutation.mutate();
+    followMutations.unfollowMutation.mutate();
   };
 
   const handlePageClick = (event: {selected: number}) => {
@@ -153,7 +156,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
               ) : (
                 <button
                   className="btn btn-sm btn-outline-secondary action-btn"
-                  disabled={fallowMutations?.isPending}
+                  disabled={followMutations?.isPending}
                   onClick={
                     uesrData?.profile.following
                       ? handleUnfollowUser
