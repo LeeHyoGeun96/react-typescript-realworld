@@ -1,8 +1,4 @@
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query';
+import {useSuspenseQuery} from '@tanstack/react-query';
 import {
   Link,
   NavLink,
@@ -12,9 +8,6 @@ import {
 } from 'react-router-dom';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import {useBoundStore} from '../store';
-
-import {profileService} from '../services/profile.service';
-import {ProfileType} from '../types/global';
 import NetworkError from '../errors/NetworkError';
 import ReactPaginate from 'react-paginate';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
@@ -22,6 +15,7 @@ import {usePaginationParams} from '../hooks/usePaginationParams';
 import ArticleList from '../components/ArticleList';
 import {useFavoriteMutations} from '../hooks/useFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
+import useFallowMutations from '../hooks/useFollowMutations';
 
 interface ProfilePageProps {}
 
@@ -29,7 +23,6 @@ const ITEMS_PER_PAGE = 10;
 
 const ProfilePage = ({}: ProfilePageProps) => {
   const token = useBoundStore((state) => state.token);
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const {username} = useParams();
@@ -63,6 +56,16 @@ const ProfilePage = ({}: ProfilePageProps) => {
         token,
       })
     : null;
+
+  const fallowMutations =
+    token && username
+      ? useFallowMutations({
+          queryKey: QUERY_KEYS.profile.getProfile(username!, token),
+          token,
+          username: username,
+        })
+      : null;
+
   const handleFavoriteArticle = (slug: string) => {
     if (!favoriteMutations) {
       const isConfirmed = window.confirm(
@@ -85,6 +88,28 @@ const ProfilePage = ({}: ProfilePageProps) => {
     favoriteMutations.unfavoriteArticle.mutate(slug);
   };
 
+  const handleFollowUser = () => {
+    if (!fallowMutations) {
+      const isConfirmed = window.confirm(
+        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
+      );
+      if (!isConfirmed) return;
+      return navigate('/login');
+    }
+    fallowMutations.followMutation.mutate();
+  };
+
+  const handleUnfollowUser = () => {
+    if (!fallowMutations) {
+      const isConfirmed = window.confirm(
+        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
+      );
+      if (!isConfirmed) return;
+      return navigate('/login');
+    }
+    fallowMutations.unfollowMutation.mutate();
+  };
+
   const handlePageClick = (event: {selected: number}) => {
     setPage(event.selected);
   };
@@ -100,76 +125,9 @@ const ProfilePage = ({}: ProfilePageProps) => {
   const loggedInUser = useBoundStore((state) => state.user);
   const isSameUser = loggedInUser?.username === username;
 
-  const {mutate: followUser} = useMutation({
-    mutationFn: () =>
-      profileService.followUser({
-        username: username!,
-        token: token!,
-      }),
-    onMutate: async () => {
-      const previousProfile = queryClient.getQueryData(['profile', username]);
-
-      queryClient.setQueryData(['profile', username], (old: ProfileType) => ({
-        ...old,
-        isFollowing: true,
-      }));
-
-      return {previousProfile};
-    },
-    onError: (_, __, context) => {
-      // 에러 발생시 이전 데이터로 롤백
-      if (context?.previousProfile) {
-        queryClient.setQueryData(
-          ['profile', username],
-          context.previousProfile,
-        );
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({queryKey: ['profile', username]});
-    },
-  });
-
-  const {mutate: unfollowUser} = useMutation({
-    mutationFn: () =>
-      profileService.unfollowUser({
-        username: username!,
-        token: token!,
-      }),
-    onMutate: async () => {
-      const previousProfile = queryClient.getQueryData(['profile', username]);
-
-      queryClient.setQueryData(['profile', username], (old: ProfileType) => ({
-        ...old,
-        isFollowing: false,
-      }));
-
-      return {previousProfile};
-    },
-    onError: (_, __, context) => {
-      if (context?.previousProfile) {
-        queryClient.setQueryData(
-          ['profile', username],
-          context.previousProfile,
-        );
-      }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({queryKey: ['profile', username]});
-    },
-  });
-
   if (!username || !token) {
     throw new NetworkError({code: 401, message: 'Unauthorized'});
   }
-
-  const handleFollowUser = () => {
-    followUser();
-  };
-
-  const handleUnfollowUser = () => {
-    unfollowUser();
-  };
 
   return (
     <div className="profile-page">
@@ -195,6 +153,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
               ) : (
                 <button
                   className="btn btn-sm btn-outline-secondary action-btn"
+                  disabled={fallowMutations?.isPending}
                   onClick={
                     uesrData?.profile.following
                       ? handleUnfollowUser
@@ -237,6 +196,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
                       isActive ? 'nav-link active' : 'nav-link'
                     }
                   >
+                    {isSameUser ? 'My' : `${uesrData?.profile.username}'s`}{' '}
                     Favorited Articles
                   </NavLink>
                 </li>
