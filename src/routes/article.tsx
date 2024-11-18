@@ -1,37 +1,50 @@
-import {QueryClient} from '@tanstack/react-query';
+import {QueryClient, useSuspenseQuery} from '@tanstack/react-query';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
-import {Form, Link, LoaderFunctionArgs, useLoaderData} from 'react-router-dom';
-import {ErrorDisplay} from '../components/ErrorDisplay';
-import {GetUniqueArticleResponse} from '../types/articleTypes';
+import {
+  Form,
+  Link,
+  LoaderFunctionArgs,
+  useLoaderData,
+  useNavigate,
+} from 'react-router-dom';
 import {checkSameUser} from '../util/checkSameUser';
 import TagList from '../components/TagList';
 import Comments from '../components/Comments';
+import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
+import useFollowMutations from '../hooks/useFollowMutations';
+import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
+import {useArticleFavoriteMutations} from '../hooks/useArticleFavoriteMutations';
 
 export const loader =
   (queryClient: QueryClient) =>
   async ({params}: LoaderFunctionArgs) => {
     const {slug} = params;
     const token = useBoundStore.getState().token;
-    let response = null;
-
+    let articleResponse = null;
     if (!slug) {
       return new NetworkError({code: 400, message: 'slug가 필요합니다.'});
     }
 
     try {
       if (token) {
-        response = await queryClient.fetchQuery(
+        articleResponse = await queryClient.ensureQueryData(
           articleQueryOptions.getArticle({slug, token}),
         );
+        await queryClient.ensureQueryData(
+          profileQueryOptions.getProfile({
+            username: articleResponse.article.author.username,
+            token,
+          }),
+        );
       } else {
-        response = await queryClient.fetchQuery(
+        await queryClient.ensureQueryData(
           articleQueryOptions.getArticle({slug}),
         );
       }
 
-      return response;
+      return {token, slug};
     } catch (error) {
       if (NetworkError.isNetworkError(error)) {
         return error;
@@ -43,15 +56,104 @@ export const loader =
 interface ArticlePageProps {}
 
 const ArticlePage = ({}: ArticlePageProps) => {
-  const loaderData = useLoaderData() as NetworkError | GetUniqueArticleResponse;
+  const loaderData = useLoaderData() as {
+    token: string | null;
+    slug: string;
+  };
+
+  const articleQuery = useSuspenseQuery(
+    articleQueryOptions.getArticle({
+      slug: loaderData.slug,
+      token: loaderData.token ?? undefined,
+    }),
+  );
+
   const loggedInUser = useBoundStore((state) => state.user);
+  const navigate = useNavigate();
+
+  const {article} = articleQuery.data;
+
+  const profileQuery = useSuspenseQuery({
+    ...profileQueryOptions.getProfile({
+      username: article.author.username,
+      token: loaderData.token ?? undefined,
+    }),
+  });
+
+  const {data: profileData} = profileQuery;
+
+  const followMutations = loaderData.token
+    ? useFollowMutations({
+        queryKey: QUERY_KEYS.profile.getProfile({
+          username: article.author.username,
+          token: loaderData.token,
+        }),
+        token: loaderData.token,
+        username: article.author.username,
+      })
+    : null;
+
+  const favoriteMutations = loaderData.token
+    ? useArticleFavoriteMutations({
+        queryKey: QUERY_KEYS.article.detail(article.slug, loaderData.token),
+        token: loaderData.token,
+        slug: article.slug,
+      })
+    : null;
+
+  const handleFollow = () => {
+    if (!followMutations) {
+      const confirm = window.confirm(
+        '로그인이 필요합니다 로그인 하시겠습니까?',
+      );
+      if (confirm) {
+        return navigate('/login');
+      }
+      return;
+    }
+    followMutations.followMutation.mutate();
+  };
+
+  const handleUnfollow = () => {
+    if (!followMutations) {
+      const confirm = window.confirm(
+        '로그인이 필요합니다 로그인 하시겠습니까?',
+      );
+      if (confirm) {
+        return navigate('/login');
+      }
+      return;
+    }
+    followMutations.unfollowMutation.mutate();
+  };
+
+  const handleFavorite = () => {
+    if (!favoriteMutations) {
+      const confirm = window.confirm(
+        '로그인이 필요합니다 로그인 하시겠습니까?',
+      );
+      if (confirm) {
+        return navigate('/login');
+      }
+      return;
+    }
+    favoriteMutations.favoriteArticle.mutate();
+  };
+
+  const handleUnfavorite = () => {
+    if (!favoriteMutations) {
+      const confirm = window.confirm(
+        '로그인이 필요합니다 로그인 하시겠습니까?',
+      );
+      if (confirm) {
+        return navigate('/login');
+      }
+      return;
+    }
+    favoriteMutations.unfavoriteArticle.mutate();
+  };
+
   let isSameUser = false;
-
-  if (NetworkError.isNetworkError(loaderData)) {
-    return <ErrorDisplay errors={loaderData} />;
-  }
-
-  const {article} = loaderData;
 
   if (loggedInUser) {
     isSameUser = checkSameUser({
@@ -81,17 +183,35 @@ const ArticlePage = ({}: ArticlePageProps) => {
                 {new Date(article.createdAt).toLocaleDateString()}
               </span>
             </div>
+            <button
+              className="btn btn-sm btn-outline-primary"
+              onClick={article.favorited ? handleUnfavorite : handleFavorite}
+              disabled={favoriteMutations?.isPending || false}
+            >
+              <i className="ion-heart"></i>
+              &nbsp; {article.favorited
+                ? 'Unfavorite Post'
+                : 'Favorite Post'}{' '}
+              <span className="counter">{article.favoritesCount}</span>
+            </button>
+            &nbsp;&nbsp;
             {isSameUser ? null : (
               <>
-                <button className="btn btn-sm btn-outline-secondary">
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  disabled={followMutations?.isPending || false}
+                  onClick={
+                    profileData?.profile.following
+                      ? handleUnfollow
+                      : handleFollow
+                  }
+                >
                   <i className="ion-plus-round"></i>
-                  &nbsp; Follow {article.author.username}
+                  &nbsp;{' '}
+                  {profileData?.profile.following ? 'Unfollow' : 'Follow'}{' '}
+                  {article.author.username}
                 </button>
                 &nbsp;&nbsp;
-                <button className="btn btn-sm btn-outline-primary">
-                  <i className="ion-heart"></i>
-                  &nbsp; Favorite Post <span className="counter">(29)</span>
-                </button>
               </>
             )}
             {isSameUser ? (

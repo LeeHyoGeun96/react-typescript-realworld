@@ -1,4 +1,4 @@
-import {StrictMode} from 'react';
+import {StrictMode, Suspense} from 'react';
 import {createRoot} from 'react-dom/client';
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
 
@@ -13,15 +13,13 @@ import EditorPage, {
 } from './routes/editor.tsx';
 import ArticlePage, {loader as articleLoader} from './routes/article.tsx';
 import ProfilePage from './routes/profile.tsx';
-import UserPosts from './components/UserPosts.tsx';
-import UserFavorites from './components/UserFavorites.tsx';
 import RootPage, {loader as rootLoader} from './routes/root.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import ErrorPage from './routes/error.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import {action as deleteArticleAction} from './routes/deleteArticle';
-import {loader as pagenatedArticlesLoader} from './components/PagenatedAticles.tsx';
+import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
   defaultOptions: {},
@@ -37,7 +35,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <IndexPage />,
-        loader: pagenatedArticlesLoader,
       },
       {
         path: '/login',
@@ -91,15 +88,27 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile/:username',
-        element: <ProfilePage />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ProfilePage />
+          </Suspense>
+        ),
         children: [
           {
-            index: true,
-            element: <UserPosts />,
+            path: '',
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProfilePage />
+              </Suspense>
+            ),
           },
           {
             path: 'favorites',
-            element: <UserFavorites />,
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProfilePage />
+              </Suspense>
+            ),
           },
         ],
       },
@@ -112,6 +121,7 @@ createRoot(document.getElementById('root') as HTMLElement).render(
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
+        <ReactQueryDevtools buttonPosition="bottom-right" />
       </QueryClientProvider>
     </ErrorBoundary>
   </StrictMode>,

@@ -6,15 +6,16 @@ import {
   GetCommentsByArticleRequestParams,
   GetUniqueArticleRequestParams,
 } from '../types/articleTypes';
+import {QUERY_KEYS} from './constants/queryKeys';
 
 export const articleQueryOptions = {
   getArticle: ({slug, token}: GetUniqueArticleRequestParams) => ({
-    queryKey: token ? ['article', slug, token] : ['article', slug],
+    queryKey: QUERY_KEYS.article.detail(slug, token),
     queryFn: () => articleService.getUniqueArticle({slug, token}),
   }),
 
   getComments: ({slug, token}: GetCommentsByArticleRequestParams) => ({
-    queryKey: token ? ['comments', slug, token] : ['comments', slug],
+    queryKey: QUERY_KEYS.article.comments(slug, token),
     queryFn: () => articleService.getComments({slug, token}),
   }),
 
@@ -26,18 +27,14 @@ export const articleQueryOptions = {
     favorited,
     token,
   }: ArticlesQueryRequestParams) => ({
-    queryKey: [
-      'articles',
-      'article',
-      {
-        tab: 'global' as const,
-        ...(offset && {offset}),
-        ...(limit && {limit}),
-        ...(tag && {tag}),
-        ...(author && {author}),
-        ...(favorited && {favorited}),
-      },
-    ],
+    queryKey: QUERY_KEYS.articles.all({
+      offset,
+      limit,
+      tag,
+      author,
+      favorited,
+      token,
+    }),
 
     queryFn: () =>
       articleService.getArticles({
@@ -53,16 +50,7 @@ export const articleQueryOptions = {
   }),
 
   getFeed: ({offset, limit, token}: FeedQueryRequestParams) => ({
-    queryKey: [
-      'articles',
-      'article',
-      {
-        tab: 'personal' as const,
-        ...(offset && {offset}),
-        ...(limit && {limit}),
-      },
-      token,
-    ] as const,
+    queryKey: QUERY_KEYS.articles.feed({offset, limit, token}),
     queryFn: () => articleService.getFeed({offset, limit, token}),
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60,

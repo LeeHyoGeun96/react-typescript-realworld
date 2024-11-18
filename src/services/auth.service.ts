@@ -1,4 +1,4 @@
-import { apiClient } from '../util/api';
+import {apiClient} from '../util/api';
 import {
   SignupResponse,
   LoginResponse,
@@ -6,14 +6,14 @@ import {
   UpdateUserResponse,
   User,
   SignupDTO,
-  SignupParams,
+  SignupRequestParams,
   LoginRequestParams,
   LoginDTO,
 } from '../types/authTypes';
 
 export const authService = {
-  signUp: (data: SignupParams) => {
-    return apiClient.post<SignupResponse, SignupDTO>('/users', data);
+  signUp: (data: SignupRequestParams) => {
+    return apiClient.post<SignupResponse, SignupDTO>('/users', {user: data});
   },
 
   login: (data: LoginRequestParams) => {

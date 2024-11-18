@@ -1,10 +1,5 @@
 import {useQuery} from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
-import {
-  LoaderFunctionArgs,
-  useLoaderData,
-  useSearchParams,
-} from 'react-router-dom';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
@@ -13,58 +8,79 @@ import {tagQueryOptions} from '../queryOptions/tagQueryOptions';
 import ArticleList from './ArticleList';
 import FeedToggle from './FeedToggle';
 import {ArticlesResponse} from '../types/articleTypes';
-
-export const loader = async ({request}: LoaderFunctionArgs) => {
-  const url = new URL(request.url);
-  const searchParams = new URLSearchParams(url.search);
-
-  const params = {
-    tab: searchParams.get('tab') || 'global',
-    offset: Number(searchParams.get('offset')) || 0,
-    limit: Number(searchParams.get('limit')) || 10,
-    tag: searchParams.get('tag') || undefined,
-    author: searchParams.get('author') || undefined,
-    token: useBoundStore.getState().token,
-  };
-
-  // personal feed인데 token이 없는 경우 처리
-  if (params.tab === 'personal' && !params.token) {
-    throw new NetworkError({code: 401, message: 'Unauthorized'});
-  }
-
-  return params;
-};
+import {usePaginationParams} from '../hooks/usePaginationParams';
+import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
+import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
+import {useNavigate} from 'react-router-dom';
 
 interface PagenatedAticlesProps {}
 
 const ITEMS_PER_PAGE = 10;
 
 const PagenatedAticles = ({}: PagenatedAticlesProps) => {
+  const navigate = useNavigate();
   const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
-  const params = useLoaderData() as {
-    offset: number;
-    limit: number;
-    tag: string | undefined;
-    author: string | undefined;
-    tab: string;
-    token: string | undefined;
-  };
-  const [_, setSearchParams] = useSearchParams();
+  const token = useBoundStore((state) => state.token);
+  const {currentState, setPage, setFilter} =
+    usePaginationParams(ITEMS_PER_PAGE);
 
   const getFeedQueryOption =
-    'personal' === params.tab && params.token
+    currentState.tab === 'personal' && token
       ? articleQueryOptions.getFeed({
-          offset: params.offset,
-          limit: params.limit,
-          token: params.token,
+          ...currentState,
+          token: token,
         })
-      : articleQueryOptions.getArticles(params);
+      : articleQueryOptions.getArticles({
+          ...currentState,
+          token: token ?? undefined,
+        });
 
-  const getTagsQueryOption = tagQueryOptions.getTags(params);
+  const getTagsQueryOption = tagQueryOptions.getTags({
+    token: token ?? undefined,
+  });
 
   const articlesQuery = useQuery<ArticlesResponse, NetworkError>(
     getFeedQueryOption,
   );
+
+  const favoriteMutations = token
+    ? useArticlesFavoriteMutations({
+        queryKey:
+          currentState.tab === 'personal' && token
+            ? QUERY_KEYS.articles.feed({
+                ...currentState,
+                token,
+              })
+            : QUERY_KEYS.articles.all({
+                ...currentState,
+                token,
+              }),
+        token,
+      })
+    : null;
+
+  const handleFavoriteArticle = (slug: string) => {
+    if (!favoriteMutations) {
+      const isConfirmed = window.confirm(
+        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
+      );
+      if (!isConfirmed) return;
+      return navigate('/login');
+    }
+    favoriteMutations.favoriteArticle.mutate(slug);
+  };
+
+  const handleUnfavoriteArticle = (slug: string) => {
+    if (!favoriteMutations) {
+      const isConfirmed = window.confirm(
+        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
+      );
+      if (!isConfirmed) return;
+      return navigate('/login');
+    }
+    favoriteMutations.unfavoriteArticle.mutate(slug);
+  };
+
   const {articles, articlesCount} = articlesQuery.data || {
     articles: [],
     articlesCount: 0,
@@ -84,35 +100,47 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   const isFetching = articlesQuery.isFetching;
 
   const pageCount = Math.ceil(articlesCount / ITEMS_PER_PAGE);
-  const currentPage = Math.floor(params.offset / ITEMS_PER_PAGE);
+  const currentPage = Math.floor(currentState.offset / ITEMS_PER_PAGE);
 
   const handlePageClick = (event: {selected: number}) => {
-    setSearchParams((prev) => ({
-      ...Object.fromEntries(prev.entries()),
-      offset: (event.selected * ITEMS_PER_PAGE).toString(),
-    }));
+    setPage(event.selected);
   };
 
   const handleTagClick = (tag: string) => {
-    setSearchParams((prev) => ({
-      ...Object.fromEntries(prev.entries()),
-      tab: 'tag',
+    setFilter({
+      ...currentState,
       tag,
-      offset: '0',
-    }));
+    });
+  };
+
+  const handleTabChange = (tab: 'global' | 'personal') => {
+    setFilter({
+      ...currentState,
+      tab,
+    });
   };
 
   return (
     <div className="container page">
       <div className="row">
         <div className="col-md-9">
-          <FeedToggle params={params} isLoggedIn={isLoggedIn} />
+          <FeedToggle
+            params={{tab: currentState.tab, tag: currentState.tag}}
+            isLoggedIn={isLoggedIn}
+            onTabChange={handleTabChange}
+            disabled={isFetching}
+          />
 
           {isFetching ? (
             <div className="article-preview">Updating...</div>
           ) : null}
 
-          <ArticleList articles={articles} />
+          <ArticleList
+            articles={articles}
+            favoriteArticle={handleFavoriteArticle}
+            unfavoriteArticle={handleUnfavoriteArticle}
+            isPending={favoriteMutations?.isPending || false}
+          />
 
           <ReactPaginate
             pageCount={pageCount}
@@ -123,8 +151,8 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
             pageLinkClassName="page-link"
             activeClassName="active"
             previousLabel=""
-            previousClassName="previous disabled"
-            nextClassName="previous disabled"
+            previousClassName="disabled"
+            nextClassName="disabled"
             nextLabel=""
           />
 

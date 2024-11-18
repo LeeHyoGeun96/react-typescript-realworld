@@ -18,6 +18,10 @@ import {
   ArticlesResponse,
   FeedQueryRequestParams,
   FeedQueryResponse,
+  FavoriteArticleRequestParams,
+  FavoriteArticleResponse,
+  UnfavoriteArticleRequestParams,
+  UnfavoriteArticleResponse,
 } from '../types/articleTypes';
 import {apiClient} from '../util/api';
 
@@ -107,5 +111,20 @@ export const articleService = {
       headers: {Authorization: `Bearer ${token}`},
       params: {offset, limit},
     });
+  },
+
+  favoriteArticle: ({slug, token}: FavoriteArticleRequestParams) => {
+    return apiClient.post<FavoriteArticleResponse, void>(
+      `/articles/${slug}/favorite`,
+      undefined,
+      {headers: {Authorization: `Bearer ${token}`}},
+    );
+  },
+
+  unfavoriteArticle: ({slug, token}: UnfavoriteArticleRequestParams) => {
+    return apiClient.delete<UnfavoriteArticleResponse, void>(
+      `/articles/${slug}/favorite`,
+      {headers: {Authorization: `Bearer ${token}`}},
+    );
   },
 };
