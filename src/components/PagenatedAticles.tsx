@@ -12,6 +12,7 @@ import {usePaginationParams} from '../hooks/usePaginationParams';
 import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import {useNavigate} from 'react-router-dom';
+import LoadingIndicator from './LoadingIndicator';
 
 interface PagenatedAticlesProps {}
 
@@ -139,18 +140,14 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
             disabled={isFetching}
           />
 
-          {isFetching && (
-            <div className="p-4 text-center text-gray-600 dark:text-gray-400">
-              Loading...
-            </div>
-          )}
-
           <ArticleList
             articles={articles}
             favoriteArticle={handleFavoriteArticle}
             unfavoriteArticle={handleUnfavoriteArticle}
             isPending={favoriteMutations?.isPending || false}
           />
+
+          <LoadingIndicator isFetching={isFetching} />
 
           <div className="mt-8">
             <ReactPaginate
