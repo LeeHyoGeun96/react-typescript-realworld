@@ -1,9 +1,9 @@
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { useBoundStore } from '../store';
-import { QueryClient } from '@tanstack/react-query';
-import { authQueryOptions } from '../queryOptions/authQueryOptions';
+import {useBoundStore} from '../store';
+import {QueryClient} from '@tanstack/react-query';
+import {authQueryOptions} from '../queryOptions/authQueryOptions';
 
 export const loader = (queryClient: QueryClient) => async () => {
   const token = useBoundStore.getState().token;
@@ -20,7 +20,7 @@ export const loader = (queryClient: QueryClient) => async () => {
       authQueryOptions.getCurrentUser(token),
     );
 
-    const { user } = response;
+    const {user} = response;
     loginFn(user, token);
     return null;
   } catch (error) {
@@ -33,11 +33,13 @@ interface RootPageProps {}
 
 const RootPage = ({}: RootPageProps) => {
   return (
-    <>
-      <Header />
-      <Outlet />
-      <Footer />
-    </>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 pb-16 lg:pb-0">
+        <Header />
+        <Outlet />
+        <Footer />
+      </div>
+    </div>
   );
 };
 

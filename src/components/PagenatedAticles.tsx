@@ -171,7 +171,7 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
 
         {/* 태그 사이드바 */}
         <div className="lg:w-64 w-full ">
-          <div className="lg:sticky lg:top-4">
+          <div className="lg:sticky lg:top-24">
             <SelectTag tags={tags} onTagClick={handleTagClick} />
           </div>
         </div>
