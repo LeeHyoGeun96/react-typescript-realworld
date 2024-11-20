@@ -141,7 +141,7 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
 
           {isFetching && (
             <div className="p-4 text-center text-gray-600 dark:text-gray-400">
-              Updating...
+              Loading...
             </div>
           )}
 
