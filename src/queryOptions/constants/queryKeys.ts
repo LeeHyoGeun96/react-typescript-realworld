@@ -11,7 +11,7 @@ export const QUERY_KEYS = {
     }) => {
       return [
         'articles',
-        'article',
+
         {
           tab: 'global',
           ...(params?.offset && {offset: params.offset}),
@@ -26,7 +26,7 @@ export const QUERY_KEYS = {
     feed: (params: {offset?: number; limit?: number; token?: string}) => {
       return [
         'articles',
-        'article',
+
         {
           tab: 'personal' as const,
           ...(params?.offset && {offset: params.offset}),
@@ -40,7 +40,7 @@ export const QUERY_KEYS = {
     detail: (slug: string, token?: string) =>
       token
         ? ['articles', 'article', slug, token]
-        : (['articles', 'article', slug] as const),
+        : (['articles', slug] as const),
     comments: (slug: string, token?: string) =>
       token
         ? ['articles', 'comments', slug, token]
