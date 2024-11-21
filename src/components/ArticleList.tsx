@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
 import {Article} from '../types/articleTypes';
+import Avatar from './Avatar';
 
 interface ArticleListProps {
   articles: Article[];
@@ -29,10 +30,11 @@ const ArticleList = ({
               to={`/profile/${article.author.username}`}
               className="flex-shrink-0"
             >
-              <img
-                src={article.author.image || ''}
-                alt={article.author.username}
-                className="h-10 w-10 rounded-full object-cover"
+              <Avatar
+                username={article.author.username || ''}
+                image={article.author.image}
+                size="md"
+                className="mr-1"
               />
             </Link>
             <div className="ml-3 flex-grow">

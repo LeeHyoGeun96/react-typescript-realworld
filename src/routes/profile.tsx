@@ -16,6 +16,7 @@ import ArticleList from '../components/ArticleList';
 import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import useFollowMutations from '../hooks/useFollowMutations';
+import Avatar from '../components/Avatar';
 
 interface ProfilePageProps {}
 
@@ -27,7 +28,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
 
   const {username} = useParams();
   const favoritesMatch = useMatch(`profile/${username}/favorites`);
-  const {currentState, setPage} = usePaginationParams(ITEMS_PER_PAGE);
+  const {currentState, setOffset} = usePaginationParams(ITEMS_PER_PAGE);
 
   const {data: uesrData} = useSuspenseQuery({
     ...profileQueryOptions.getProfile({
@@ -114,7 +115,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
   };
 
   const handlePageClick = (event: {selected: number}) => {
-    setPage(event.selected);
+    setOffset(event.selected);
   };
 
   const {articles, articlesCount} = articlesQuery.data || {
@@ -138,10 +139,11 @@ const ProfilePage = ({}: ProfilePageProps) => {
         <div className="container">
           <div className="row">
             <div className="col-xs-12 col-md-10 offset-md-1">
-              <img
-                src={uesrData?.profile.image ?? ''}
-                className="user-img"
-                alt={`${uesrData?.profile.username ?? ''} profile`}
+              <Avatar
+                username={uesrData?.profile.username || ''}
+                image={uesrData?.profile.image}
+                size="lg"
+                className="mb-1"
               />
               <h4>{uesrData?.profile.username ?? ''}</h4>
               <p>{uesrData?.profile.bio ?? ''}</p>

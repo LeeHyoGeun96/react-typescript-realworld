@@ -1,6 +1,7 @@
 import {Link, NavLink} from 'react-router-dom';
 import {useBoundStore} from '../store';
 import {useEffect} from 'react';
+import Avatar from './Avatar';
 
 interface HeaderProps {}
 
@@ -113,13 +114,11 @@ const Header = ({}: HeaderProps) => {
                     to={`/profile/${user?.username}`}
                     className="flex flex-col items-center text-sm text-gray-500"
                   >
-                    <img
-                      src={
-                        user?.image ||
-                        `https://ui-avatars.com/api/?name=${user?.username}`
-                      }
-                      className="w-6 h-6 rounded-full mb-1"
-                      alt={user?.username || ''}
+                    <Avatar
+                      username={user?.username || ''}
+                      image={user?.image}
+                      size="sm"
+                      className="mb-1"
                     />
                     <span>Profile</span>
                   </Link>
@@ -224,15 +223,13 @@ const NavLinks = ({isLoggedIn, user}: NavLinksProps) => (
         <li>
           <Link
             to={`/profile/${user?.username}`}
-            className="flex items-center text-gray-600 dark:text-gray-300 hover:text-brand-primary transition-colors"
+            className="flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-primary transition-colors"
           >
-            <img
-              src={
-                user?.image ||
-                `https://ui-avatars.com/api/?name=${user?.username}`
-              }
-              className="w-8 h-8 rounded-full mr-2"
-              alt={user?.username}
+            <Avatar
+              username={user?.username || ''}
+              image={user?.image}
+              size="md"
+              className="mr-1"
             />
             {user?.username}
           </Link>

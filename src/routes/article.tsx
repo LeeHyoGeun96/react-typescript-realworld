@@ -16,6 +16,7 @@ import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import useFollowMutations from '../hooks/useFollowMutations';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import {useArticleFavoriteMutations} from '../hooks/useArticleFavoriteMutations';
+import Avatar from '../components/Avatar';
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -170,7 +171,12 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
           <div className="article-meta">
             <Link to={`/profile/${article.author.username}`}>
-              <img src={article.author.image || ''} />
+              <Avatar
+                username={article.author.username || ''}
+                image={article.author.image}
+                size="md"
+                className="mr-1"
+              />
             </Link>
             <div className="info">
               <Link
