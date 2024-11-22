@@ -1,11 +1,5 @@
 import {useSuspenseQuery} from '@tanstack/react-query';
-import {
-  Link,
-  NavLink,
-  useMatch,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import {Link, NavLink, useMatch, useParams} from 'react-router-dom';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
