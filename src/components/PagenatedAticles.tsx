@@ -13,6 +13,7 @@ import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutation
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import {useNavigate} from 'react-router-dom';
 import LoadingIndicator from './LoadingIndicator';
+import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
 interface PagenatedAticlesProps {}
 
@@ -24,6 +25,7 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   const token = useBoundStore((state) => state.token);
   const {currentState, setOffset, setFilter} =
     usePaginationParams(ITEMS_PER_PAGE);
+  const confirmLogin = useLoginConfirm();
 
   const getFeedQueryOption =
     currentState.tab === 'personal' && token
@@ -62,22 +64,16 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
 
   const handleFavoriteArticle = (slug: string) => {
     if (!favoriteMutations) {
-      const isConfirmed = window.confirm(
-        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
-      );
-      if (!isConfirmed) return;
-      return navigate('/login');
+      confirmLogin();
+      return;
     }
     favoriteMutations.favoriteArticle.mutate(slug);
   };
 
   const handleUnfavoriteArticle = (slug: string) => {
     if (!favoriteMutations) {
-      const isConfirmed = window.confirm(
-        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
-      );
-      if (!isConfirmed) return;
-      return navigate('/login');
+      confirmLogin();
+      return;
     }
     favoriteMutations.unfavoriteArticle.mutate(slug);
   };

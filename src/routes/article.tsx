@@ -17,6 +17,7 @@ import useFollowMutations from '../hooks/useFollowMutations';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import {useArticleFavoriteMutations} from '../hooks/useArticleFavoriteMutations';
 import Avatar from '../components/Avatar';
+import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -80,6 +81,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
       token: loaderData.token ?? undefined,
     }),
   });
+  const confirmLogin = useLoginConfirm();
 
   const {data: profileData} = profileQuery;
 
@@ -104,12 +106,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleFollow = () => {
     if (!followMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     followMutations.followMutation.mutate();
@@ -117,12 +114,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleUnfollow = () => {
     if (!followMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     followMutations.unfollowMutation.mutate();
@@ -130,12 +122,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleFavorite = () => {
     if (!favoriteMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     favoriteMutations.favoriteArticle.mutate();
@@ -143,12 +130,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleUnfavorite = () => {
     if (!favoriteMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     favoriteMutations.unfavoriteArticle.mutate();

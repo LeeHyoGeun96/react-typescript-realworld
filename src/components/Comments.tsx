@@ -6,6 +6,7 @@ import {useNavigate} from 'react-router-dom';
 import useCommentMutations from '../hooks/useCommentMutations';
 import CommentForm from './CommentForm';
 import CommentCard from './CommentCard';
+import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
 const Comments = ({slug}: {slug: string}) => {
   const [commentText, setCommentText] = useState('');
@@ -15,6 +16,7 @@ const Comments = ({slug}: {slug: string}) => {
     articleQueryOptions.getComments({slug, token: token ?? undefined}),
   );
   const loggedInUser = useBoundStore((state) => state.user);
+  const confirmLogin = useLoginConfirm();
   const commentMutations = token
     ? useCommentMutations({
         token,
@@ -25,10 +27,7 @@ const Comments = ({slug}: {slug: string}) => {
   const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!commentMutations) {
-      const answer = window.confirm('로그인이 필요합니다.');
-      if (answer) {
-        navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     if (commentText.trim() === '') {
@@ -40,10 +39,7 @@ const Comments = ({slug}: {slug: string}) => {
 
   const handleDeleteComment = (id: number) => {
     if (!commentMutations) {
-      const answer = window.confirm('로그인이 필요합니다.');
-      if (answer) {
-        navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     commentMutations.deleteCommentMutation.mutate(id);
