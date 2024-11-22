@@ -11,7 +11,6 @@ import {ArticlesResponse} from '../types/articleTypes';
 import {usePaginationParams} from '../hooks/usePaginationParams';
 import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
-import {useNavigate} from 'react-router-dom';
 import LoadingIndicator from './LoadingIndicator';
 import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
@@ -20,7 +19,6 @@ interface PagenatedAticlesProps {}
 const ITEMS_PER_PAGE = 10;
 
 const PagenatedAticles = ({}: PagenatedAticlesProps) => {
-  const navigate = useNavigate();
   const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
   const token = useBoundStore((state) => state.token);
   const {currentState, setOffset, setFilter} =

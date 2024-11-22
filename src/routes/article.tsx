@@ -2,13 +2,7 @@ import {QueryClient, useSuspenseQuery} from '@tanstack/react-query';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
-import {
-  Form,
-  Link,
-  LoaderFunctionArgs,
-  useLoaderData,
-  useNavigate,
-} from 'react-router-dom';
+import {Form, Link, LoaderFunctionArgs, useLoaderData} from 'react-router-dom';
 import {checkSameUser} from '../util/checkSameUser';
 import TagList from '../components/TagList';
 import Comments from '../components/Comments';
@@ -71,7 +65,6 @@ const ArticlePage = ({}: ArticlePageProps) => {
   );
 
   const loggedInUser = useBoundStore((state) => state.user);
-  const navigate = useNavigate();
 
   const {article} = articleQuery.data;
 

@@ -2,7 +2,6 @@ import {useQuery} from '@tanstack/react-query';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {useBoundStore} from '../store';
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
 import useCommentMutations from '../hooks/useCommentMutations';
 import CommentForm from './CommentForm';
 import CommentCard from './CommentCard';
@@ -11,7 +10,6 @@ import {useLoginConfirm} from '../hooks/useLoginConfirm';
 const Comments = ({slug}: {slug: string}) => {
   const [commentText, setCommentText] = useState('');
   const {token} = useBoundStore((state) => state);
-  const navigate = useNavigate();
   const {data, isPending: isCommentsPending} = useQuery(
     articleQueryOptions.getComments({slug, token: token ?? undefined}),
   );
