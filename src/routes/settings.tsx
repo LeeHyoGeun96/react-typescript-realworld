@@ -5,6 +5,7 @@ import {authService} from '../services/auth.service';
 import NetworkError from '../errors/NetworkError';
 import {UpdateUserRequest} from '../types/authTypes';
 import {ErrorDisplay} from '../components/ErrorDisplay';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 interface SettingsPageProps {}
 
@@ -68,80 +69,150 @@ const SettingsPage = ({}: SettingsPageProps) => {
   };
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        role="alert"
+        className="flex justify-center items-center min-h-screen"
+      >
+        <LoadingIndicator />
+      </div>
+    );
   }
 
   return (
-    <div className="settings-page">
-      <div className="container page">
-        <div className="row">
-          <div className="col-md-6 offset-md-3 col-xs-12">
-            <h1 className="text-xs-center">Your Settings</h1>
-            <ErrorDisplay errors={errors} />
-            <form onSubmit={handleSubmit}>
-              <fieldset>
-                <fieldset className="form-group">
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder="URL of profile picture"
-                    defaultValue={user?.image || ''}
-                    name="image"
-                  />
-                </fieldset>
-                <fieldset className="form-group">
-                  <input
-                    className="form-control form-control-lg"
-                    type="text"
-                    placeholder="Your Name"
-                    defaultValue={user?.username || ''}
-                    name="username"
-                  />
-                </fieldset>
-                <fieldset className="form-group">
-                  <textarea
-                    className="form-control form-control-lg"
-                    rows={8}
-                    placeholder="Short bio about you"
-                    defaultValue={user?.bio || ''}
-                    name="bio"
-                  ></textarea>
-                </fieldset>
-                <fieldset className="form-group">
-                  <input
-                    className="form-control form-control-lg"
-                    type="text"
-                    placeholder="Email"
-                    defaultValue={user?.email || ''}
-                    name="email"
-                  />
-                </fieldset>
-                <fieldset className="form-group">
-                  <input
-                    className="form-control form-control-lg"
-                    type="password"
-                    placeholder="New Password"
-                    name="password"
-                  />
-                </fieldset>
-                <button className="btn btn-lg btn-primary pull-xs-right">
-                  Update Settings
-                </button>
-              </fieldset>
-            </form>
-            <hr />
+    <main className="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4">
+        <section className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 md:p-8">
+          <h2 className="text-5xl text-center text-gray-800 dark:text-gray-100 mb-8">
+            Your Settings
+          </h2>
 
+          <ErrorDisplay errors={errors} />
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <div className="form-group">
+                <label htmlFor="image" className="sr-only">
+                  Profile Picture URL
+                </label>
+                <input
+                  id="image"
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 
+                    rounded-lg bg-white dark:bg-gray-700 
+                    text-gray-900 dark:text-gray-100
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent
+                    placeholder-gray-500 dark:placeholder-gray-400"
+                  type="text"
+                  placeholder="URL of profile picture"
+                  defaultValue={user?.image || ''}
+                  name="image"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="username" className="sr-only">
+                  Username
+                </label>
+                <input
+                  id="username"
+                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
+                    rounded-lg bg-white dark:bg-gray-700 
+                    text-gray-900 dark:text-gray-100
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent
+                    placeholder-gray-500 dark:placeholder-gray-400"
+                  type="text"
+                  placeholder="Your Name"
+                  defaultValue={user?.username || ''}
+                  name="username"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="bio" className="sr-only">
+                  Bio
+                </label>
+                <textarea
+                  id="bio"
+                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
+                    rounded-lg bg-white dark:bg-gray-700 
+                    text-gray-900 dark:text-gray-100
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent
+                    placeholder-gray-500 dark:placeholder-gray-400"
+                  rows={8}
+                  placeholder="Short bio about you"
+                  defaultValue={user?.bio || ''}
+                  name="bio"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
+                    rounded-lg bg-white dark:bg-gray-700 
+                    text-gray-900 dark:text-gray-100
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent
+                    placeholder-gray-500 dark:placeholder-gray-400"
+                  type="email"
+                  placeholder="Email"
+                  defaultValue={user?.email || ''}
+                  name="email"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" className="sr-only">
+                  New Password
+                </label>
+                <input
+                  id="password"
+                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
+                    rounded-lg bg-white dark:bg-gray-700 
+                    text-gray-900 dark:text-gray-100
+                    focus:ring-2 focus:ring-green-500 focus:border-transparent
+                    placeholder-gray-500 dark:placeholder-gray-400"
+                  type="password"
+                  placeholder="New Password"
+                  name="password"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="px-6 py-2 bg-green-500 dark:bg-green-600 
+                  text-white rounded-lg 
+                  hover:bg-green-600 dark:hover:bg-green-700 
+                  focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 
+                  focus:ring-offset-2 dark:focus:ring-offset-gray-800 
+                  transition-colors"
+              >
+                Update Settings
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <button
-              className="btn btn-outline-danger"
-              type="submit"
+              className="w-full px-6 py-2 text-red-500 dark:text-red-400 
+                border border-red-500 dark:border-red-400 rounded-lg 
+                hover:bg-red-50 dark:hover:bg-red-900/20 
+                focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 
+                focus:ring-offset-2 dark:focus:ring-offset-gray-800 
+                transition-colors"
+              type="button"
               onClick={handleLogout}
             >
-              Or click here to logout.
+              Or click here to logout
             </button>
           </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 };
 
