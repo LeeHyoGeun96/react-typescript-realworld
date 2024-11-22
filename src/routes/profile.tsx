@@ -25,7 +25,6 @@ const ITEMS_PER_PAGE = 10;
 
 const ProfilePage = ({}: ProfilePageProps) => {
   const token = useBoundStore((state) => state.token);
-  const navigate = useNavigate();
 
   const {username} = useParams();
   const favoritesMatch = useMatch(`profile/${username}/favorites`);
