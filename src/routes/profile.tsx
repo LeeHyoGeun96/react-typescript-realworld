@@ -3,7 +3,6 @@ import {Link, NavLink, useMatch, useParams} from 'react-router-dom';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
-import ReactPaginate from 'react-paginate';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {usePaginationParams} from '../hooks/usePaginationParams';
 import ArticleList from '../components/ArticleList';
@@ -12,6 +11,7 @@ import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import useFollowMutations from '../hooks/useFollowMutations';
 import Avatar from '../components/Avatar';
 import {useLoginConfirm} from '../hooks/useLoginConfirm';
+import Pagination from '../components/Pagination';
 
 interface ProfilePageProps {}
 
@@ -117,104 +117,113 @@ const ProfilePage = ({}: ProfilePageProps) => {
   }
 
   return (
-    <div className="profile-page">
-      <div className="user-info">
-        <div className="container">
-          <div className="row">
-            <div className="col-xs-12 col-md-10 offset-md-1">
-              <Avatar
-                username={uesrData?.profile.username || ''}
-                image={uesrData?.profile.image}
-                size="lg"
-                className="mb-1"
-              />
-              <h4>{uesrData?.profile.username ?? ''}</h4>
-              <p>{uesrData?.profile.bio ?? ''}</p>
-              {uesrData?.profile.isCurrentUser ? (
-                <Link
-                  to="/settings"
-                  className="btn btn-sm btn-outline-secondary action-btn"
-                >
-                  <i className="ion-gear-a"></i>
-                  &nbsp; Edit Profile Settings
-                </Link>
-              ) : (
-                <button
-                  className="btn btn-sm btn-outline-secondary action-btn"
-                  disabled={followMutations?.isPending}
-                  onClick={
-                    uesrData?.profile.following
-                      ? handleUnfollowUser
-                      : handleFollowUser
-                  }
-                >
-                  <i className="ion-plus-round"></i>
-                  &nbsp; {uesrData?.profile.following
-                    ? 'Unfollow'
-                    : 'Follow'}{' '}
+    <main className="bg-white dark:bg-gray-900">
+      <header className="bg-gray-100 dark:bg-gray-800 py-8">
+        <div className="container mx-auto px-4">
+          <article className="max-w-3xl mx-auto flex flex-col items-center">
+            <Avatar
+              username={uesrData?.profile.username || ''}
+              image={uesrData?.profile.image}
+              size="lg"
+              className="mb-4"
+            />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {uesrData?.profile.username ?? ''}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              {uesrData?.profile.bio ?? ''}
+            </p>
+            {uesrData?.profile.isCurrentUser ? (
+              <Link
+                to="/settings"
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
+                aria-label="프로필 설정 편집"
+              >
+                <i className="ion-gear-a mr-1" aria-hidden="true"></i>
+                <span>Edit Profile Settings</span>
+              </Link>
+            ) : (
+              <button
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 disabled:opacity-50"
+                disabled={followMutations?.isPending}
+                onClick={
+                  uesrData?.profile.following
+                    ? handleUnfollowUser
+                    : handleFollowUser
+                }
+                aria-pressed={uesrData?.profile.following}
+              >
+                <i className="ion-plus-round mr-1" aria-hidden="true"></i>
+                <span>
+                  {uesrData?.profile.following ? 'Unfollow' : 'Follow'}{' '}
                   {uesrData?.profile.username}
-                </button>
-              )}
-            </div>
-          </div>
+                </span>
+              </button>
+            )}
+          </article>
         </div>
-      </div>
+      </header>
 
-      <div className="container">
-        <div className="row">
-          <div className="col-xs-12 col-md-10 offset-md-1">
-            <div className="articles-toggle">
-              <ul className="nav nav-pills outline-active">
-                <li className="nav-item">
-                  <NavLink
-                    to={`/profile/${username}`}
-                    className={({isActive}) =>
-                      isActive ? 'nav-link active' : 'nav-link'
-                    }
-                    end
-                  >
-                    {isSameUser ? 'My' : `${uesrData?.profile.username}'s`}{' '}
-                    Articles
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink
-                    to={`/profile/${username}/favorites`}
-                    className={({isActive}) =>
-                      isActive ? 'nav-link active' : 'nav-link'
-                    }
-                  >
-                    {isSameUser ? 'My' : `${uesrData?.profile.username}'s`}{' '}
-                    Favorited Articles
-                  </NavLink>
-                </li>
-              </ul>
-            </div>
+      <section className="container mx-auto px-4 py-8" aria-label="글 목록">
+        <div className="max-w-3xl mx-auto">
+          <nav
+            className="flex border-b border-gray-200 dark:border-gray-700 mb-6"
+            aria-label="글 필터"
+          >
+            <h3 className="sr-only">글 분류</h3>
+            <NavLink
+              to={`/profile/${username}`}
+              className={({isActive}) =>
+                `px-4 py-2 text-lg font-medium ${
+                  isActive
+                    ? 'text-brand-primary border-b-2 border-brand-primary'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`
+              }
+              end
+              role="tab"
+              aria-selected={!favoritesMatch}
+            >
+              <span>
+                {isSameUser ? 'My' : `${uesrData?.profile.username}'s`} Articles
+              </span>
+            </NavLink>
+            <NavLink
+              to={`/profile/${username}/favorites`}
+              className={({isActive}) =>
+                `px-4 py-2 text-lg font-medium ${
+                  isActive
+                    ? 'text-brand-primary border-b-2 border-brand-primary'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`
+              }
+              role="tab"
+              aria-selected={!!favoritesMatch}
+            >
+              <span>
+                {isSameUser ? 'My' : `${uesrData?.profile.username}'s`}{' '}
+                Favorited Articles
+              </span>
+            </NavLink>
+          </nav>
 
-            <ArticleList
-              articles={articles}
-              favoriteArticle={handleFavoriteArticle}
-              unfavoriteArticle={handleUnfavoriteArticle}
-              isPending={articlesQuery.isFetching}
-            />
+          <ArticleList
+            articles={articles}
+            favoriteArticle={handleFavoriteArticle}
+            unfavoriteArticle={handleUnfavoriteArticle}
+            isPending={articlesQuery.isFetching}
+          />
 
-            <ReactPaginate
+          <footer className="mt-6">
+            <Pagination
               pageCount={pageCount}
+              currentPage={currentPage}
               onPageChange={handlePageClick}
-              forcePage={currentPage}
-              containerClassName="pagination"
-              pageClassName="page-item"
-              pageLinkClassName="page-link"
-              activeClassName="active"
-              previousLabel=""
-              previousClassName="disabled"
-              nextClassName="disabled"
-              nextLabel=""
             />
-          </div>
+          </footer>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 

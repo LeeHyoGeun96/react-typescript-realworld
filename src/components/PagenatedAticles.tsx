@@ -1,5 +1,4 @@
 import {useQuery} from '@tanstack/react-query';
-import ReactPaginate from 'react-paginate';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
@@ -13,6 +12,7 @@ import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutation
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import LoadingIndicator from './LoadingIndicator';
 import {useLoginConfirm} from '../hooks/useLoginConfirm';
+import Pagination from './Pagination';
 
 interface PagenatedAticlesProps {}
 
@@ -144,21 +144,10 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
           <LoadingIndicator isFetching={isFetching} />
 
           <div className="mt-8">
-            <ReactPaginate
+            <Pagination
               pageCount={pageCount}
+              currentPage={currentPage}
               onPageChange={handlePageClick}
-              forcePage={currentPage}
-              containerClassName="flex justify-center gap-2"
-              pageClassName="rounded-md"
-              pageLinkClassName="block px-3 py-2 btn-outline- active:bg-brand-primary text-white hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md transition-colors"
-              activeClassName="!bg-brand-primary"
-              activeLinkClassName="!text-white hover:!bg-brand-primary"
-              previousLabel=""
-              nextLabel=""
-              previousClassName="hidden"
-              nextClassName="hidden"
-              disabledClassName="opacity-50"
-              disabledLinkClassName="cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-700"
             />
           </div>
         </div>
