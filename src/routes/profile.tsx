@@ -108,6 +108,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
 
   const pageCount = Math.ceil(articlesCount / ITEMS_PER_PAGE);
   const currentPage = Math.floor(currentState.offset / ITEMS_PER_PAGE);
+  console.log(pageCount, currentPage);
 
   const loggedInUser = useBoundStore((state) => state.user);
   const isSameUser = loggedInUser?.username === username;
@@ -117,9 +118,9 @@ const ProfilePage = ({}: ProfilePageProps) => {
   }
 
   return (
-    <main className="bg-white dark:bg-gray-900">
+    <main className="bg-white dark:bg-gray-900 min-h-screen">
       <header className="bg-gray-100 dark:bg-gray-800 py-8">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 w-full">
           <article className="max-w-3xl mx-auto flex flex-col items-center">
             <Avatar
               username={uesrData?.profile.username || ''}
@@ -127,10 +128,10 @@ const ProfilePage = ({}: ProfilePageProps) => {
               size="lg"
               className="mb-4"
             />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2 text-center">
               {uesrData?.profile.username ?? ''}
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
+            <p className="text-gray-600 dark:text-gray-300 mb-4 text-center px-4 max-w-2xl">
               {uesrData?.profile.bio ?? ''}
             </p>
             {uesrData?.profile.isCurrentUser ? (
@@ -164,17 +165,19 @@ const ProfilePage = ({}: ProfilePageProps) => {
         </div>
       </header>
 
-      <section className="container mx-auto px-4 py-8" aria-label="글 목록">
+      <section
+        className="container mx-auto px-4 py-8 overflow-x-hidden"
+        aria-label="글 목록"
+      >
         <div className="max-w-3xl mx-auto">
           <nav
-            className="flex border-b border-gray-200 dark:border-gray-700 mb-6"
+            className="flex flex-wrap border-b border-gray-200 dark:border-gray-700 mb-6"
             aria-label="글 필터"
           >
-            <h3 className="sr-only">글 분류</h3>
             <NavLink
               to={`/profile/${username}`}
               className={({isActive}) =>
-                `px-4 py-2 text-lg font-medium ${
+                `px-4 py-2 text-sm sm:text-base md:text-lg font-medium whitespace-nowrap ${
                   isActive
                     ? 'text-brand-primary border-b-2 border-brand-primary'
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
@@ -184,14 +187,14 @@ const ProfilePage = ({}: ProfilePageProps) => {
               role="tab"
               aria-selected={!favoritesMatch}
             >
-              <span>
+              <span className="block">
                 {isSameUser ? 'My' : `${uesrData?.profile.username}'s`} Articles
               </span>
             </NavLink>
             <NavLink
               to={`/profile/${username}/favorites`}
               className={({isActive}) =>
-                `px-4 py-2 text-lg font-medium ${
+                `px-4 py-2 text-sm sm:text-base md:text-lg font-medium whitespace-nowrap ${
                   isActive
                     ? 'text-brand-primary border-b-2 border-brand-primary'
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
@@ -200,27 +203,29 @@ const ProfilePage = ({}: ProfilePageProps) => {
               role="tab"
               aria-selected={!!favoritesMatch}
             >
-              <span>
+              <span className="block">
                 {isSameUser ? 'My' : `${uesrData?.profile.username}'s`}{' '}
                 Favorited Articles
               </span>
             </NavLink>
           </nav>
 
-          <ArticleList
-            articles={articles}
-            favoriteArticle={handleFavoriteArticle}
-            unfavoriteArticle={handleUnfavoriteArticle}
-            isPending={articlesQuery.isFetching}
-          />
-
-          <footer className="mt-6">
+          <div className="w-full overflow-x-auto">
+            <ArticleList
+              articles={articles}
+              favoriteArticle={handleFavoriteArticle}
+              unfavoriteArticle={handleUnfavoriteArticle}
+              isPending={articlesQuery.isFetching}
+            />
             <Pagination
               pageCount={pageCount}
               currentPage={currentPage}
               onPageChange={handlePageClick}
+              className="flex-wrap"
             />
-          </footer>
+          </div>
+
+          <footer className="mt-6 pb-8"></footer>
         </div>
       </section>
     </main>
