@@ -16,10 +16,10 @@ import ProfilePage from './routes/profile.tsx';
 import RootPage, {loader as rootLoader} from './routes/root.tsx';
 import ProtectedRoute from './components/ProtectedRoute.tsx';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import ErrorPage from './routes/error.tsx';
-import ErrorBoundary from './components/ErrorBoundary.tsx';
+import ErrorLayout from './components/ErrorLayout.tsx';
 import {action as deleteArticleAction} from './routes/deleteArticle';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
+import {ErrorBoundary} from './components/ErrorBoundary.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {},
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <RootPage />,
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorLayout />,
     loader: rootLoader(queryClient),
     children: [
       {
