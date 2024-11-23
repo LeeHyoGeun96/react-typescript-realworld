@@ -28,26 +28,34 @@ export const createApi = (url: string) => {
   instance.interceptors.response.use(
     (response) => response,
     (error: AxiosError<ErrorResponseType>) => {
-      console.log('Error interceptor:', error.response?.data); // 디버깅용
-
       if (error.response) {
         const {status, data} = error.response;
+
+        // 422 Validation Error 특별 처리
+        if (status === 422 && data.errors) {
+          throw new NetworkError({
+            code: status,
+            message: NetworkError.errorMessages[status],
+            errors: data.errors, // ValidationErrors 타입의 객체 {[key: string]: string[]}
+          });
+        }
+
+        // 일반 에러 처리
         throw new NetworkError({
           code: status,
-          message: error.message || '서버 오류가 발생했습니다.',
-          errors: data.errors, // data.errors를 직접 사용
+          message:
+            NetworkError.errorMessages[status] || '서버 오류가 발생했습니다.',
+          errors: data.errors,
         });
       } else if (error.request) {
-        console.log('Request error:', error.request); // 디버깅용
         throw new NetworkError({
-          code: 0,
-          message: '서버로부터 응답을 받지 못했습니다.',
+          code: 503,
+          message: NetworkError.errorMessages[503],
         });
       } else {
-        console.log('Error setup:', error.message); // 디버깅용
         throw new NetworkError({
           code: 0,
-          message: '요청을 보내는 중 오류가 발생했습니다.',
+          message: '인터넷 연결을 확인해주세요.',
         });
       }
     },

@@ -1,1 +1,1 @@
-export * from './NetworkError.ts';
+export {default} from './NetworkError.ts';

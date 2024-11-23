@@ -1,34 +1,25 @@
-import { Component, ErrorInfo, ReactNode } from 'react';
+import {Component, ErrorInfo, ReactNode} from 'react';
+import NetworkError from '../errors';
 
-interface ErrorBoundaryState {
+interface Props {
+  children?: ReactNode;
+}
+
+interface State {
   hasError: boolean;
-  errorInfo?: {
-    message: string;
-    details?: string;
+  error: Error | null;
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  public state: State = {
+    hasError: false,
+    error: null,
   };
-}
 
-interface ErrorBoundaryProps {
-  children: ReactNode;
-  message?: string;
-  fallback?: ReactNode;
-}
-
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = {
-      hasError: false,
-      errorInfo: undefined,
-    };
-  }
-
-  public static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+  public static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
-      errorInfo: {
-        message: error.message,
-      },
+      error,
     };
   }
 
@@ -36,22 +27,55 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     console.error('Uncaught error:', error, errorInfo);
   }
 
+  private handleRefresh = () => {
+    this.setState({hasError: false, error: null});
+    window.location.reload();
+  };
+
   public render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
+      if (NetworkError.isNetworkError(this.state.error)) {
+        const error = this.state.error;
+        return (
+          <div className="error-container">
+            <h1>오류가 발생했습니다 ({error.code})</h1>
+            <p>{error.message}</p>
+            {error.errors && error.code === 422 && (
+              <ul className="validation-errors">
+                {Object.entries(error.errors).map(([field, messages]) => (
+                  <li key={field}>
+                    {field}: {messages.join(', ')}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="error-actions">
+              {/* 서버 에러(500번대)일 때는 새로고침 버튼만 표시 */}
+              {error.code >= 500 && (
+                <button onClick={this.handleRefresh}>새로고침</button>
+              )}
+              {/* 인증 에러(401, 403)일 때는 로그인 버튼 표시 */}
+              {[401, 403].includes(error.code) && (
+                <button onClick={() => (window.location.href = '/login')}>
+                  로그인하기
+                </button>
+              )}
+              {/* 그 외 에러는 이전 페이지로 가기 버튼 표시 */}
+              {error.code < 500 && ![401, 403].includes(error.code) && (
+                <button onClick={() => window.history.back()}>
+                  이전 페이지로
+                </button>
+              )}
+            </div>
+          </div>
+        );
       }
 
       return (
         <div className="error-container">
-          <h2>{this.props.message || '문제가 발생했습니다'}</h2>
-          <p>{this.state.errorInfo?.message}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="btn btn-primary"
-          >
-            다시 시도
-          </button>
+          <h1>치명적인 오류가 발생했습니다</h1>
+          <p>앱을 다시 로드해주세요</p>
+          <button onClick={this.handleRefresh}>새로고침</button>
         </div>
       );
     }
@@ -59,5 +83,3 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     return this.props.children;
   }
 }
-
-export default ErrorBoundary;
