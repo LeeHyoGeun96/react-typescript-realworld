@@ -10,37 +10,77 @@ export default function ErrorLayout() {
     const isAuthError = [401, 403].includes(error.code);
 
     return (
-      <div className="error-container">
-        <h2>오류가 발생했습니다 ({error.code})</h2>
-        <p>{error.message}</p>
-        {error.errors && (
-          <ul className="error-details">
-            {Object.entries(error.errors).map(([key, value]) => (
-              <li key={key}>{value}</li>
-            ))}
-          </ul>
-        )}
-        <div className="error-actions">
-          {!isServerError &&
-            !isAuthError && ( // 서버 에러나 인증 에러가 아닐 때만 뒤로가기
-              <button onClick={() => navigate(-1)}>이전 페이지로</button>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+            오류가 발생했습니다 ({error.code})
+          </h2>
+          <p className="text-gray-600 text-center mb-6">{error.message}</p>
+
+          {error.errors && (
+            <ul className="space-y-2 text-sm text-red-500 mb-6">
+              {Object.entries(error.errors).map(([key, value]) => (
+                <li key={key} className="flex flex-col">
+                  <span className="font-medium">{key}</span>
+                  <span className="text-gray-600">
+                    {Array.isArray(value) ? value.join(', ') : value}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="flex justify-center space-x-4">
+            {!isServerError && !isAuthError && (
+              <button
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                이전 페이지로
+              </button>
             )}
-          {isServerError && ( // 서버 에러일 때는 새로고침만
-            <button onClick={() => window.location.reload()}>새로고침</button>
-          )}
-          {isAuthError && ( // 인증 에러일 때는 로그인으로
-            <button onClick={() => navigate('/login')}>로그인하기</button>
-          )}
+
+            {isServerError && (
+              <button
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                새로고침
+              </button>
+            )}
+
+            {isAuthError && (
+              <button
+                onClick={() => navigate('/login')}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                로그인하기
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="error-container">
-      <h1>예상치 못한 오류가 발생했습니다</h1>
-      <p>잠시 후 다시 시도해주세요</p>
-      <button onClick={() => navigate('/')}>홈으로 가기</button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center text-gray-900 mb-4">
+          예상치 못한 오류가 발생했습니다
+        </h1>
+        <p className="text-gray-600 text-center mb-6">
+          잠시 후 다시 시도해주세요
+        </p>
+        <div className="flex justify-center">
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            홈으로 가기
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

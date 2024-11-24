@@ -24,7 +24,8 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error);
+    console.error('Error Stack:', errorInfo.componentStack);
   }
 
   private handleRefresh = () => {
@@ -37,45 +38,77 @@ export class ErrorBoundary extends Component<Props, State> {
       if (NetworkError.isNetworkError(this.state.error)) {
         const error = this.state.error;
         return (
-          <div className="error-container">
-            <h1>오류가 발생했습니다 ({error.code})</h1>
-            <p>{error.message}</p>
-            {error.errors && error.code === 422 && (
-              <ul className="validation-errors">
-                {Object.entries(error.errors).map(([field, messages]) => (
-                  <li key={field}>
-                    {field}: {messages.join(', ')}
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="error-actions">
-              {/* 서버 에러(500번대)일 때는 새로고침 버튼만 표시 */}
-              {error.code >= 500 && (
-                <button onClick={this.handleRefresh}>새로고침</button>
+          <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+              <h1 className="text-2xl font-bold text-center text-gray-900 mb-6">
+                오류가 발생했습니다 ({error.code})
+              </h1>
+              <p className="text-gray-600 text-center mb-6">{error.message}</p>
+
+              {error.errors && error.code === 422 && (
+                <ul className="space-y-2 text-sm text-red-500 mb-6">
+                  {Object.entries(error.errors).map(([field, messages]) => (
+                    <li key={field} className="flex flex-col">
+                      <span className="font-medium">{field}</span>
+                      <span className="text-gray-600">
+                        {messages.join(', ')}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               )}
-              {/* 인증 에러(401, 403)일 때는 로그인 버튼 표시 */}
-              {[401, 403].includes(error.code) && (
-                <button onClick={() => (window.location.href = '/login')}>
-                  로그인하기
-                </button>
-              )}
-              {/* 그 외 에러는 이전 페이지로 가기 버튼 표시 */}
-              {error.code < 500 && ![401, 403].includes(error.code) && (
-                <button onClick={() => window.history.back()}>
-                  이전 페이지로
-                </button>
-              )}
+
+              <div className="flex justify-center space-x-4">
+                {error.code >= 500 && (
+                  <button
+                    onClick={this.handleRefresh}
+                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    새로고침
+                  </button>
+                )}
+
+                {[401, 403].includes(error.code) && (
+                  <button
+                    onClick={() => (window.location.href = '/login')}
+                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  >
+                    로그인하기
+                  </button>
+                )}
+
+                {error.code < 500 && ![401, 403].includes(error.code) && (
+                  <button
+                    onClick={() => window.history.back()}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    이전 페이지로
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         );
       }
 
       return (
-        <div className="error-container">
-          <h1>치명적인 오류가 발생했습니다</h1>
-          <p>앱을 다시 로드해주세요</p>
-          <button onClick={this.handleRefresh}>새로고침</button>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
+            <h1 className="text-2xl font-bold text-center text-gray-900 mb-4">
+              치명적인 오류가 발생했습니다
+            </h1>
+            <p className="text-gray-600 text-center mb-6">
+              앱을 다시 로드해주세요
+            </p>
+            <div className="flex justify-center">
+              <button
+                onClick={this.handleRefresh}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                새로고침
+              </button>
+            </div>
+          </div>
         </div>
       );
     }
