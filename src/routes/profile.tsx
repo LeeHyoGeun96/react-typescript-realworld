@@ -224,8 +224,6 @@ const ProfilePage = ({}: ProfilePageProps) => {
               className="flex-wrap"
             />
           </div>
-
-          <footer className="mt-6 pb-8"></footer>
         </div>
       </section>
     </main>
