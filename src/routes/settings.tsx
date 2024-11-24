@@ -6,6 +6,7 @@ import NetworkError from '../errors/NetworkError';
 import {UpdateUserRequest} from '../types/authTypes';
 import {ErrorDisplay} from '../components/ErrorDisplay';
 import LoadingIndicator from '../components/LoadingIndicator';
+import {Input} from '../components/Input';
 
 interface SettingsPageProps {}
 
@@ -95,13 +96,8 @@ const SettingsPage = ({}: SettingsPageProps) => {
                 <label htmlFor="image" className="sr-only">
                   Profile Picture URL
                 </label>
-                <input
+                <Input
                   id="image"
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 
-                    rounded-lg bg-white dark:bg-gray-700 
-                    text-gray-900 dark:text-gray-100
-                    focus:ring-2 focus:ring-green-500 focus:border-transparent
-                    placeholder-gray-500 dark:placeholder-gray-400"
                   type="text"
                   placeholder="URL of profile picture"
                   defaultValue={user?.image || ''}
@@ -113,13 +109,8 @@ const SettingsPage = ({}: SettingsPageProps) => {
                 <label htmlFor="username" className="sr-only">
                   Username
                 </label>
-                <input
+                <Input
                   id="username"
-                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
-                    rounded-lg bg-white dark:bg-gray-700 
-                    text-gray-900 dark:text-gray-100
-                    focus:ring-2 focus:ring-green-500 focus:border-transparent
-                    placeholder-gray-500 dark:placeholder-gray-400"
                   type="text"
                   placeholder="Your Name"
                   defaultValue={user?.username || ''}
@@ -131,17 +122,13 @@ const SettingsPage = ({}: SettingsPageProps) => {
                 <label htmlFor="bio" className="sr-only">
                   Bio
                 </label>
-                <textarea
+                <Input
                   id="bio"
-                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
-                    rounded-lg bg-white dark:bg-gray-700 
-                    text-gray-900 dark:text-gray-100
-                    focus:ring-2 focus:ring-green-500 focus:border-transparent
-                    placeholder-gray-500 dark:placeholder-gray-400"
-                  rows={8}
+                  isTextArea
                   placeholder="Short bio about you"
                   defaultValue={user?.bio || ''}
                   name="bio"
+                  className="min-h-[200px]"
                 />
               </div>
 
@@ -149,13 +136,8 @@ const SettingsPage = ({}: SettingsPageProps) => {
                 <label htmlFor="email" className="sr-only">
                   Email
                 </label>
-                <input
+                <Input
                   id="email"
-                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
-                    rounded-lg bg-white dark:bg-gray-700 
-                    text-gray-900 dark:text-gray-100
-                    focus:ring-2 focus:ring-green-500 focus:border-transparent
-                    placeholder-gray-500 dark:placeholder-gray-400"
                   type="email"
                   placeholder="Email"
                   defaultValue={user?.email || ''}
@@ -167,13 +149,8 @@ const SettingsPage = ({}: SettingsPageProps) => {
                 <label htmlFor="password" className="sr-only">
                   New Password
                 </label>
-                <input
+                <Input
                   id="password"
-                  className="w-full px-4 py-2 text-lg border border-gray-300 dark:border-gray-600 
-                    rounded-lg bg-white dark:bg-gray-700 
-                    text-gray-900 dark:text-gray-100
-                    focus:ring-2 focus:ring-green-500 focus:border-transparent
-                    placeholder-gray-500 dark:placeholder-gray-400"
                   type="password"
                   placeholder="New Password"
                   name="password"

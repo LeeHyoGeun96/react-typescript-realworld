@@ -19,6 +19,7 @@ import {ErrorDisplay} from '../components/ErrorDisplay';
 import {Article} from '../types/articleTypes';
 import {deepEqual} from '../util/deepEqual';
 import {useEffect, useState} from 'react';
+import {Input} from '../components/Input';
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -169,10 +170,9 @@ const EditorPage = ({}: EditorPageProps) => {
                   <label htmlFor="title" className="sr-only">
                     제목
                   </label>
-                  <input
+                  <Input
                     id="title"
                     type="text"
-                    className="w-full px-4 py-3 text-xl border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     placeholder="Article Title"
                     defaultValue={article.title}
                     name="title"
@@ -183,10 +183,9 @@ const EditorPage = ({}: EditorPageProps) => {
                   <label htmlFor="description" className="sr-only">
                     설명
                   </label>
-                  <input
+                  <Input
                     id="description"
                     type="text"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                     placeholder="What's this article about?"
                     defaultValue={article.description}
                     name="description"
@@ -197,12 +196,13 @@ const EditorPage = ({}: EditorPageProps) => {
                   <label htmlFor="body" className="sr-only">
                     본문
                   </label>
-                  <textarea
+                  <Input
                     id="body"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent dark:bg-gray-800 dark:border-gray-700 dark:text-white min-h-[200px]"
+                    isTextArea
                     placeholder="Write your article (in markdown)"
                     defaultValue={article.body}
                     name="body"
+                    className="min-h-[200px]"
                   />
                 </div>
 

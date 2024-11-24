@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import TagList from './TagList';
+import {Input} from './Input';
 
 interface TagInputProps {
   tags: string[];
@@ -20,9 +21,8 @@ const TagInput = ({tags, onAddTag, onRemoveTag}: TagInputProps) => {
 
   return (
     <fieldset className="form-group">
-      <input
+      <Input
         type="text"
-        className="form-control"
         placeholder="Enter tags"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}

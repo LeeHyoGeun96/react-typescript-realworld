@@ -1,6 +1,7 @@
 import {Form, Link} from 'react-router-dom';
 import NetworkError from '../errors/NetworkError';
 import {ErrorDisplay} from './ErrorDisplay';
+import {Input} from './Input';
 
 interface AuthFormProps {
   type: 'login' | 'register';
@@ -38,15 +39,7 @@ const AuthForm = ({type, errors}: AuthFormProps) => {
             <Form method="post" className="space-y-6">
               {!isLogin && (
                 <fieldset className="mb-4">
-                  <input
-                    className="block w-full px-3 py-2 text-lg 
-                      text-gray-900 dark:text-white
-                      bg-white dark:bg-gray-800 
-                      border border-gray-300 dark:border-gray-700 
-                      rounded-md
-                      focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400
-                      focus:border-green-500 dark:focus:border-green-400
-                      placeholder-gray-400 dark:placeholder-gray-500"
+                  <Input
                     type="text"
                     name="username"
                     placeholder="Username"
@@ -55,31 +48,10 @@ const AuthForm = ({type, errors}: AuthFormProps) => {
                 </fieldset>
               )}
               <fieldset className="mb-4">
-                <input
-                  className="block w-full px-3 py-2 text-lg 
-                    text-gray-900 dark:text-white
-                    bg-white dark:bg-gray-800 
-                    border border-gray-300 dark:border-gray-700 
-                    rounded-md
-                    focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400
-                    focus:border-green-500 dark:focus:border-green-400
-                    placeholder-gray-400 dark:placeholder-gray-500"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  required
-                />
+                <Input type="email" name="email" placeholder="Email" required />
               </fieldset>
               <fieldset className="mb-4">
-                <input
-                  className="block w-full px-3 py-2 text-lg 
-                    text-gray-900 dark:text-white
-                    bg-white dark:bg-gray-800 
-                    border border-gray-300 dark:border-gray-700 
-                    rounded-md
-                    focus:outline-none focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400
-                    focus:border-green-500 dark:focus:border-green-400
-                    placeholder-gray-400 dark:placeholder-gray-500"
+                <Input
                   type="password"
                   name="password"
                   placeholder="Password"
