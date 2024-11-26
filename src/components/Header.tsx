@@ -2,12 +2,15 @@ import {Link, NavLink} from 'react-router-dom';
 import {useBoundStore} from '../store';
 import {useEffect} from 'react';
 import Avatar from './Avatar';
+import DarkModeToggle from './DarkModeToggle';
+import {CurrentUserType} from '../store/slices/userSlice';
 
 interface HeaderProps {}
 
 interface NavLinksProps {
   isLoggedIn: boolean;
-  user: any; // TODO: 실제 user 타입으로 변경
+  user: CurrentUserType | null;
+  isMobile?: boolean;
 }
 
 const Header = ({}: HeaderProps) => {
@@ -47,8 +50,7 @@ const Header = ({}: HeaderProps) => {
 
   return (
     <>
-      {/* 데스크톱 헤더 */}
-      <header className="hidden lg:block sticky top-0 bg-white dark:bg-gray-800 shadow-sm z-10">
+      <header className="hidden lg:block sticky top-0 bg-white dark:bg-gray-700 shadow-sm z-10">
         <nav className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link className="text-brand-primary text-xl font-bold" to="/">
@@ -61,97 +63,14 @@ const Header = ({}: HeaderProps) => {
         </nav>
       </header>
 
-      {/* 모바일 하단 네비게이션 */}
       <header
         id="mobile-header"
         className="lg:hidden fixed bottom-0 left-0 right-0 z-50"
       >
-        {/* 불투명한 배경 레이어 */}
         <div className="absolute inset-0 bg-white dark:bg-gray-800 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] dark:shadow-[0_-1px_3px_rgba(0,0,0,0.3)]" />
-
-        {/* 네비게이션 컨텐츠 */}
         <nav className="relative container mx-auto px-4">
           <ul className="flex items-center justify-around h-16">
-            <li>
-              <NavLink
-                to="/"
-                end
-                className={({isActive}) => `
-                  flex flex-col items-center text-sm
-                  ${isActive ? 'text-brand-primary' : 'text-gray-500'}
-                `}
-              >
-                <HomeIcon />
-                <span>Home</span>
-              </NavLink>
-            </li>
-            {isLoggedIn ? (
-              <>
-                <li>
-                  <NavLink
-                    to="/editor"
-                    className={({isActive}) => `
-                      flex flex-col items-center text-sm
-                      ${isActive ? 'text-brand-primary' : 'text-gray-500'}
-                    `}
-                    end
-                  >
-                    <EditIcon />
-                    <span>New Article</span>
-                  </NavLink>
-                </li>
-                <li>
-                  <Link
-                    to="/settings"
-                    className="flex flex-col items-center text-sm text-gray-500"
-                  >
-                    <SettingsIcon />
-                    <span>Settings</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to={`/profile/${user?.username}`}
-                    className="flex flex-col items-center text-sm text-gray-500"
-                  >
-                    <Avatar
-                      username={user?.username || ''}
-                      image={user?.image}
-                      size="sm"
-                      className="mb-1"
-                    />
-                    <span>Profile</span>
-                  </Link>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <NavLink
-                    to="/login"
-                    className={({isActive}) => `
-                      flex flex-col items-center text-sm
-                      ${isActive ? 'text-brand-primary' : 'text-gray-500'}
-                    `}
-                  >
-                    <LoginIcon />
-                    <span>Sign in</span>
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/register"
-                    className={({isActive}) => `
-                      flex flex-col items-center text-sm
-                      ${isActive ? 'text-brand-primary' : 'text-gray-500'}
-                    `}
-                  >
-                    <RegisterIcon />
-                    <span>Sign up</span>
-                  </NavLink>
-                </li>
-              </>
-            )}
+            <NavLinks isLoggedIn={isLoggedIn} user={user} isMobile={true} />
           </ul>
         </nav>
       </header>
@@ -159,85 +78,97 @@ const Header = ({}: HeaderProps) => {
   );
 };
 
-const NavLinks = ({isLoggedIn, user}: NavLinksProps) => (
-  <>
-    <li>
-      <NavLink
-        to="/"
-        end
-        className={({isActive}) => `
-          hover:text-brand-primary transition-colors
-          ${isActive ? 'text-brand-primary' : 'text-gray-600 dark:text-gray-300'}
-        `}
-      >
-        Home
-      </NavLink>
-    </li>
-    {!isLoggedIn ? (
-      <>
-        <li>
-          <NavLink
-            to="/login"
-            className={({isActive}) => `
-              hover:text-brand-primary transition-colors
-              ${isActive ? 'text-brand-primary' : 'text-gray-600 dark:text-gray-300'}
-            `}
-          >
-            Sign in
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="/register"
-            className={({isActive}) => `
-              hover:text-brand-primary transition-colors
-              ${isActive ? 'text-brand-primary' : 'text-gray-600 dark:text-gray-300'}
-            `}
-          >
-            Sign up
-          </NavLink>
-        </li>
-      </>
-    ) : (
-      <>
-        <li>
-          <NavLink
-            to="/editor"
-            className={({isActive}) => `
-              hover:text-brand-primary transition-colors
-              ${isActive ? 'text-brand-primary' : 'text-gray-600 dark:text-gray-300'}
-            `}
-            end
-          >
-            New Article
-          </NavLink>
-        </li>
-        <li>
-          <Link
-            to="/settings"
-            className="text-gray-600 dark:text-gray-300 hover:text-brand-primary transition-colors"
-          >
-            <i className="ion-gear-a"></i>&nbsp;Settings
-          </Link>
-        </li>
-        <li>
-          <Link
-            to={`/profile/${user?.username}`}
-            className="flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-brand-primary transition-colors"
-          >
-            <Avatar
-              username={user?.username || ''}
-              image={user?.image}
-              size="md"
-              className="mr-1"
-            />
-            {user?.username}
-          </Link>
-        </li>
-      </>
-    )}
-  </>
-);
+const NavLinks = ({isLoggedIn, user, isMobile = false}: NavLinksProps) => {
+  const linkClass = ({
+    classes = '',
+    isActive,
+  }: {
+    classes?: string;
+    isActive: boolean;
+  }) =>
+    isMobile
+      ? `${classes} flex flex-col items-center text-sm ${isActive ? 'text-brand-primary' : 'text-gray-500'}`
+      : `${classes} hover:text-brand-primary transition-colors ${isActive ? 'text-brand-primary' : 'text-gray-600 dark:text-gray-300'}`;
+
+  return (
+    <>
+      <li className="md:translate-y-[1px]">
+        <DarkModeToggle />
+      </li>
+      <li>
+        <NavLink to="/" end className={({isActive}) => linkClass({isActive})}>
+          {isMobile && <HomeIcon />}
+          <span>Home</span>
+        </NavLink>
+      </li>
+      {isLoggedIn ? (
+        <>
+          <li>
+            <NavLink
+              to="/editor"
+              end
+              className={({isActive}) => linkClass({isActive})}
+            >
+              {isMobile && <EditIcon />}
+              <span>New Article</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/settings"
+              className={({isActive}) => linkClass({isActive})}
+            >
+              {isMobile && <SettingsIcon />}
+              <span>Settings</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to={`/profile/${user?.username}`}
+              className={({isActive}) =>
+                linkClass({
+                  classes: 'md:flex md:gap-1 md:translate-y-[1px] ',
+                  isActive,
+                })
+              }
+            >
+              <Avatar
+                username={user?.username || ''}
+                image={user?.image}
+                size={isMobile ? 'sm' : 'md'}
+                className={isMobile ? '' : 'mr-1'}
+              />
+              <span className="translate-y-[1px] md:-translate-y-[2px] lg:translate-y-[2px]">
+                {user?.username}
+              </span>
+            </NavLink>
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            <NavLink
+              to="/login"
+              className={({isActive}) => linkClass({isActive})}
+            >
+              {isMobile && <LoginIcon />}
+              <span>Sign in</span>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/register"
+              className={({isActive}) => linkClass({isActive})}
+            >
+              {isMobile && <RegisterIcon />}
+              <span>Sign up</span>
+            </NavLink>
+          </li>
+        </>
+      )}
+    </>
+  );
+};
 
 const HomeIcon = ({className = 'w-6 h-6'}) => (
   <svg

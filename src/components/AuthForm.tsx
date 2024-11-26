@@ -16,50 +16,49 @@ const AuthForm = ({type, errors}: AuthFormProps) => {
   const switchLink = isLogin ? '/register' : '/login';
 
   return (
-    <main className="auth-page py-8 bg-white dark:bg-gray-900 min-h-screen">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-center">
-          <section className="w-full max-w-md">
-            <header className="mb-8">
-              <h1 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
-                {title}
-              </h1>
-              <p className="text-center mt-2">
-                <Link
-                  to={switchLink}
-                  className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-                >
-                  {switchText}
-                </Link>
-              </p>
-            </header>
+    <div className="container mx-auto px-4 ">
+      <div className="flex justify-center ">
+        <section className="w-full max-w-md">
+          <header className="mb-8">
+            <h2 className="text-center text-3xl font-bold text-gray-900 dark:text-white">
+              {title}
+            </h2>
+            <p className="text-center mt-2">
+              <Link
+                to={switchLink}
+                className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+              >
+                {switchText}
+              </Link>
+            </p>
+          </header>
 
-            <ErrorDisplay errors={errors} />
+          <ErrorDisplay errors={errors} />
 
-            <Form method="post" className="space-y-6">
-              {!isLogin && (
-                <fieldset className="mb-4">
-                  <Input
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    required
-                  />
-                </fieldset>
-              )}
-              <fieldset className="mb-4">
-                <Input type="email" name="email" placeholder="Email" required />
-              </fieldset>
+          <Form method="post" className="space-y-6">
+            {!isLogin && (
               <fieldset className="mb-4">
                 <Input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
+                  type="text"
+                  name="username"
+                  placeholder="Username"
                   required
                 />
               </fieldset>
-              <button
-                className="w-full py-2 px-4 text-lg 
+            )}
+            <fieldset className="mb-4">
+              <Input type="email" name="email" placeholder="Email" required />
+            </fieldset>
+            <fieldset className="mb-4">
+              <Input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+              />
+            </fieldset>
+            <button
+              className="w-full py-2 px-4 text-lg 
                   text-white
                   bg-green-600 hover:bg-green-700 
                   dark:bg-green-500 dark:hover:bg-green-600
@@ -68,15 +67,14 @@ const AuthForm = ({type, errors}: AuthFormProps) => {
                   focus:outline-none focus:ring-2 focus:ring-offset-2 
                   focus:ring-green-500 dark:focus:ring-green-400
                   float-right"
-                type="submit"
-              >
-                {title}
-              </button>
-            </Form>
-          </section>
-        </div>
+              type="submit"
+            >
+              {title}
+            </button>
+          </Form>
+        </section>
       </div>
-    </main>
+    </div>
   );
 };
 

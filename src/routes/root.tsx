@@ -33,12 +33,10 @@ interface RootPageProps {}
 
 const RootPage = ({}: RootPageProps) => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex-1 pb-16 lg:pb-0">
-        <Header />
-        <Outlet />
-        <Footer />
-      </div>
+    <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
+      <Header />
+      <Outlet />
+      <Footer />
     </div>
   );
 };

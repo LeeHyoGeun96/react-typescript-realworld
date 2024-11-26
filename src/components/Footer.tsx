@@ -1,24 +1,22 @@
 import {Link} from 'react-router-dom';
 
-interface FooterProps {}
-
-const Footer = ({}: FooterProps) => {
+const Footer = () => {
   return (
-    <footer className="py-8 bg-gray-100 border-t border-gray-200">
+    <footer className="py-9   bg-gray-100 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-700">
       <div className="container mx-auto px-4">
         <nav className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:justify-between sm:space-y-0">
           <Link
             to="/"
-            className="text-green-500 text-xl font-bold hover:text-green-600 transition-colors"
+            className="text-green-500 dark:text-green-400 text-xl font-bold hover:text-green-600 dark:hover:text-green-300 transition-colors"
             aria-label="홈으로 이동"
           >
             conduit
           </Link>
-          <p className="text-gray-600 text-sm text-center">
+          <p className="text-gray-600 dark:text-gray-300 text-sm text-center">
             An interactive learning project from{' '}
             <a
               href="https://thinkster.io"
-              className="text-green-500 hover:text-green-600 transition-colors"
+              className="text-green-500 dark:text-green-400 hover:text-green-600 dark:hover:text-green-300 transition-colors"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Thinkster 웹사이트로 이동"
