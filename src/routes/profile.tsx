@@ -134,7 +134,7 @@ const ProfilePage = ({}: ProfilePageProps) => {
             <p className="text-gray-600 dark:text-gray-300 mb-4 text-center px-4 max-w-2xl">
               {uesrData?.profile.bio ?? ''}
             </p>
-            {uesrData?.profile.isCurrentUser ? (
+            {isSameUser ? (
               <Link
                 to="/settings"
                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600"
