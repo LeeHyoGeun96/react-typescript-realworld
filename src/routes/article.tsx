@@ -2,13 +2,7 @@ import {QueryClient, useSuspenseQuery} from '@tanstack/react-query';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
-import {
-  Form,
-  Link,
-  LoaderFunctionArgs,
-  useLoaderData,
-  useNavigate,
-} from 'react-router-dom';
+import {Form, Link, LoaderFunctionArgs, useLoaderData} from 'react-router-dom';
 import {checkSameUser} from '../util/checkSameUser';
 import TagList from '../components/TagList';
 import Comments from '../components/Comments';
@@ -16,6 +10,8 @@ import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 import useFollowMutations from '../hooks/useFollowMutations';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
 import {useArticleFavoriteMutations} from '../hooks/useArticleFavoriteMutations';
+import Avatar from '../components/Avatar';
+import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -69,7 +65,6 @@ const ArticlePage = ({}: ArticlePageProps) => {
   );
 
   const loggedInUser = useBoundStore((state) => state.user);
-  const navigate = useNavigate();
 
   const {article} = articleQuery.data;
 
@@ -79,6 +74,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
       token: loaderData.token ?? undefined,
     }),
   });
+  const confirmLogin = useLoginConfirm();
 
   const {data: profileData} = profileQuery;
 
@@ -103,12 +99,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleFollow = () => {
     if (!followMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     followMutations.followMutation.mutate();
@@ -116,12 +107,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleUnfollow = () => {
     if (!followMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     followMutations.unfollowMutation.mutate();
@@ -129,12 +115,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleFavorite = () => {
     if (!favoriteMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     favoriteMutations.favoriteArticle.mutate();
@@ -142,12 +123,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
 
   const handleUnfavorite = () => {
     if (!favoriteMutations) {
-      const confirm = window.confirm(
-        '로그인이 필요합니다 로그인 하시겠습니까?',
-      );
-      if (confirm) {
-        return navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     favoriteMutations.unfavoriteArticle.mutate();
@@ -163,40 +139,62 @@ const ArticlePage = ({}: ArticlePageProps) => {
   }
 
   return (
-    <div className="article-page">
-      <div className="banner">
-        <div className="container">
-          <h1>{article.title}</h1>
+    <article className="article-page">
+      <header className="bg-gray-700 dark:bg-gray-800 shadow-sm py-8">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-semibold text-white">{article.title}</h1>
 
-          <div className="article-meta">
-            <Link to={`/profile/${article.author.username}`}>
-              <img src={article.author.image || ''} />
-            </Link>
-            <div className="info">
+          <div className="flex flex-wrap items-center  gap-4 mt-4 ">
+            <section className="flex items-center">
               <Link
                 to={`/profile/${article.author.username}`}
-                className="author"
+                aria-label={`${article.author.username}의 프로필로 이동`}
               >
-                {article.author.username}
+                <Avatar
+                  username={article.author.username}
+                  image={article.author.image}
+                  size="md"
+                  className="mr-2"
+                />
               </Link>
-              <span className="date">
-                {new Date(article.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-            <button
-              className="btn btn-sm btn-outline-primary"
-              onClick={article.favorited ? handleUnfavorite : handleFavorite}
-              disabled={favoriteMutations?.isPending || false}
+              <div className="mr-6">
+                <Link
+                  to={`/profile/${article.author.username}`}
+                  className="text-brand-primary hover:text-brand-primary/90 font-medium"
+                >
+                  {article.author.username}
+                </Link>
+                <time
+                  className="text-gray-500 text-sm block"
+                  dateTime={article.createdAt.toString()}
+                >
+                  {new Date(article.createdAt).toLocaleDateString()}
+                </time>
+              </div>
+            </section>
+
+            <nav
+              className="flex items-center flex-wrap gap-4"
+              aria-label="글 관련 작업"
             >
-              <i className="ion-heart"></i>
-              &nbsp; {article.favorited
-                ? 'Unfavorite Post'
-                : 'Favorite Post'}{' '}
-              <span className="counter">{article.favoritesCount}</span>
-            </button>
-            &nbsp;&nbsp;
-            {isSameUser ? null : (
-              <>
+              <button
+                className="btn btn-sm btn-outline-primary"
+                onClick={article.favorited ? handleUnfavorite : handleFavorite}
+                disabled={favoriteMutations?.isPending || false}
+                aria-pressed={article.favorited}
+              >
+                <span className="inline-flex items-center">
+                  <i
+                    className="ion-heart mr-[2px] self-center translate-y-[1px]"
+                    aria-hidden="true"
+                  ></i>
+                  <span>
+                    {article.favorited ? 'Unfavorite' : 'Favorite'} Post{' '}
+                    <span className="counter">({article.favoritesCount})</span>
+                  </span>
+                </span>
+              </button>
+              {!isSameUser && (
                 <button
                   className="btn btn-sm btn-outline-secondary"
                   disabled={followMutations?.isPending || false}
@@ -205,55 +203,65 @@ const ArticlePage = ({}: ArticlePageProps) => {
                       ? handleUnfollow
                       : handleFollow
                   }
+                  aria-pressed={profileData?.profile.following}
                 >
-                  <i className="ion-plus-round"></i>
-                  &nbsp;{' '}
-                  {profileData?.profile.following ? 'Unfollow' : 'Follow'}{' '}
-                  {article.author.username}
+                  <i className="ion-plus-round" aria-hidden="true"></i>
+                  <span>
+                    {profileData?.profile.following ? 'Unfollow' : 'Follow'}{' '}
+                    {article.author.username}
+                  </span>
                 </button>
-                &nbsp;&nbsp;
-              </>
-            )}
-            {isSameUser ? (
-              <>
-                <Link
-                  to={`/editor/${article.slug}`}
-                  className="btn btn-sm btn-outline-secondary"
-                >
-                  <i className="ion-edit"></i> Edit Article
-                </Link>
-                &nbsp;&nbsp;
-                <Form
-                  method="post"
-                  action={`/deleteArticle/${article.slug}`}
-                  style={{display: 'inline-block'}}
-                >
-                  <button
-                    className="btn btn-sm btn-outline-danger"
-                    type="submit"
+              )}
+              {isSameUser && (
+                <>
+                  <Link
+                    to={`/editor/${article.slug}`}
+                    className="btn btn-sm btn-outline-secondary"
+                    aria-label="글 수정하기"
                   >
-                    <i className="ion-trash-a"></i> Delete Article
-                  </button>
-                </Form>
-              </>
-            ) : null}
+                    <i className="ion-edit" aria-hidden="true"></i> Edit Article
+                  </Link>
+                  <Form
+                    method="post"
+                    action={`/deleteArticle/${article.slug}`}
+                    className="inline-block"
+                  >
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      type="submit"
+                      aria-label="글 삭제하기"
+                    >
+                      <i className="ion-trash-a" aria-hidden="true"></i> Delete
+                      Article
+                    </button>
+                  </Form>
+                </>
+              )}
+            </nav>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="container page">
-        <div className="row article-content">
-          <div className="col-md-12">
-            <p>{article.body}</p>
+      <main className="container mx-auto px-4 py-8">
+        <section className="prose dark:prose-invert max-w-none">
+          <div className="mb-8">
+            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              {article.body}
+            </p>
+          </div>
+
+          <div className="mt-4">
             <TagList tags={article.tagList} />
           </div>
-        </div>
+        </section>
 
-        <hr />
+        <hr className="my-8 border-gray-200 dark:border-gray-700" />
 
-        <Comments slug={article.slug} />
-      </div>
-    </div>
+        <section aria-label="댓글">
+          <Comments slug={article.slug} />
+        </section>
+      </main>
+    </article>
   );
 };
 

@@ -19,6 +19,7 @@ import {ErrorDisplay} from '../components/ErrorDisplay';
 import {Article} from '../types/articleTypes';
 import {deepEqual} from '../util/deepEqual';
 import {useEffect, useState} from 'react';
+import {Input} from '../components/Input';
 
 export const loader =
   (queryClient: QueryClient) =>
@@ -154,62 +155,83 @@ const EditorPage = ({}: EditorPageProps) => {
   };
 
   return (
-    <div className="editor-page">
-      <div className="container page">
-        <div className="row">
-          <div className="col-md-10 offset-md-1 col-xs-12">
-            {error && <ErrorDisplay errors={error} />}
-            <Form method="post" onSubmit={handleSubmit}>
-              <fieldset>
-                <fieldset className="form-group">
-                  <input
+    <main className="bg-white dark:bg-gray-900 py-8">
+      <div className="container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="sr-only">글 {slug ? '수정' : '작성'}</h2>
+          {error && <ErrorDisplay errors={error} />}
+
+          <Form method="post" onSubmit={handleSubmit} className="space-y-6">
+            <fieldset>
+              <legend className="sr-only">글 정보 입력</legend>
+
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="title" className="sr-only">
+                    제목
+                  </label>
+                  <Input
+                    id="title"
                     type="text"
-                    className="form-control form-control-lg"
                     placeholder="Article Title"
                     defaultValue={article.title}
                     name="title"
                   />
-                </fieldset>
-                <fieldset className="form-group">
-                  <input
+                </div>
+
+                <div>
+                  <label htmlFor="description" className="sr-only">
+                    설명
+                  </label>
+                  <Input
+                    id="description"
                     type="text"
-                    className="form-control"
                     placeholder="What's this article about?"
                     defaultValue={article.description}
                     name="description"
                   />
-                </fieldset>
-                <fieldset className="form-group">
-                  <textarea
-                    className="form-control"
-                    rows={8}
+                </div>
+
+                <div>
+                  <label htmlFor="body" className="sr-only">
+                    본문
+                  </label>
+                  <Input
+                    id="body"
+                    isTextArea
                     placeholder="Write your article (in markdown)"
                     defaultValue={article.body}
                     name="body"
-                  ></textarea>
-                </fieldset>
+                    className="min-h-[200px]"
+                  />
+                </div>
+
                 <TagInput
                   tags={tags}
                   onAddTag={addTag}
                   onRemoveTag={removeTag}
                 />
+
                 <input
                   type="hidden"
                   name="tagList"
                   value={JSON.stringify(tags)}
                 />
+              </div>
+
+              <div className="mt-6 text-right">
                 <button
-                  className="btn btn-lg pull-xs-right btn-primary"
+                  className="px-6 py-2 text-white bg-brand-primary rounded-lg hover:bg-brand-primary/90 focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary disabled:opacity-50 transition-colors"
                   type="submit"
                 >
                   Publish Article
                 </button>
-              </fieldset>
-            </Form>
-          </div>
+              </div>
+            </fieldset>
+          </Form>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -2,19 +2,19 @@ import {useQuery} from '@tanstack/react-query';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {useBoundStore} from '../store';
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
 import useCommentMutations from '../hooks/useCommentMutations';
 import CommentForm from './CommentForm';
 import CommentCard from './CommentCard';
+import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
 const Comments = ({slug}: {slug: string}) => {
   const [commentText, setCommentText] = useState('');
   const {token} = useBoundStore((state) => state);
-  const navigate = useNavigate();
   const {data, isPending: isCommentsPending} = useQuery(
     articleQueryOptions.getComments({slug, token: token ?? undefined}),
   );
   const loggedInUser = useBoundStore((state) => state.user);
+  const confirmLogin = useLoginConfirm();
   const commentMutations = token
     ? useCommentMutations({
         token,
@@ -25,10 +25,7 @@ const Comments = ({slug}: {slug: string}) => {
   const handleAddComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!commentMutations) {
-      const answer = window.confirm('로그인이 필요합니다.');
-      if (answer) {
-        navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     if (commentText.trim() === '') {
@@ -40,17 +37,18 @@ const Comments = ({slug}: {slug: string}) => {
 
   const handleDeleteComment = (id: number) => {
     if (!commentMutations) {
-      const answer = window.confirm('로그인이 필요합니다.');
-      if (answer) {
-        navigate('/login');
-      }
+      confirmLogin();
       return;
     }
     commentMutations.deleteCommentMutation.mutate(id);
   };
 
   if (isCommentsPending) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center py-4 text-gray-600 dark:text-gray-400">
+        Loading...
+      </div>
+    );
   }
 
   if (!data) {
@@ -58,8 +56,8 @@ const Comments = ({slug}: {slug: string}) => {
   }
 
   return (
-    <div className="row">
-      <div className="col-xs-12 col-md-8 offset-md-2">
+    <section className="max-w-4xl mx-auto px-4" aria-label="댓글 섹션">
+      <div className="w-full lg:w-3/4 mx-auto space-y-6">
         <CommentForm
           commentText={commentText}
           onCommentChange={(e) => setCommentText(e.target.value)}
@@ -67,17 +65,25 @@ const Comments = ({slug}: {slug: string}) => {
           isPending={commentMutations?.addCommentMutation.isPending}
         />
 
-        {data.comments.map((comment) => (
-          <CommentCard
-            key={comment.id}
-            comment={comment}
-            onDelete={() => handleDeleteComment(comment.id)}
-            isDeletePending={commentMutations?.isPending}
-            canModify={loggedInUser?.username === comment.author.username}
-          />
-        ))}
+        <div className="space-y-4" role="feed" aria-label="댓글 목록">
+          {data.comments.length === 0 ? (
+            <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+              첫 댓글을 작성해보세요!
+            </p>
+          ) : (
+            data.comments.map((comment) => (
+              <CommentCard
+                key={comment.id}
+                comment={comment}
+                onDelete={() => handleDeleteComment(comment.id)}
+                isDeletePending={commentMutations?.isPending}
+                canModify={loggedInUser?.username === comment.author.username}
+              />
+            ))
+          )}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

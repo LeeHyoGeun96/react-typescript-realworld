@@ -1,5 +1,4 @@
 import {useQuery} from '@tanstack/react-query';
-import ReactPaginate from 'react-paginate';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {useBoundStore} from '../store';
 import NetworkError from '../errors/NetworkError';
@@ -11,18 +10,20 @@ import {ArticlesResponse} from '../types/articleTypes';
 import {usePaginationParams} from '../hooks/usePaginationParams';
 import {useArticlesFavoriteMutations} from '../hooks/useArticlesFavoriteMutations';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
-import {useNavigate} from 'react-router-dom';
+import LoadingIndicator from './LoadingIndicator';
+import {useLoginConfirm} from '../hooks/useLoginConfirm';
+import Pagination from './Pagination';
 
 interface PagenatedAticlesProps {}
 
 const ITEMS_PER_PAGE = 10;
 
 const PagenatedAticles = ({}: PagenatedAticlesProps) => {
-  const navigate = useNavigate();
   const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
   const token = useBoundStore((state) => state.token);
-  const {currentState, setPage, setFilter} =
+  const {currentState, setOffset, setFilter} =
     usePaginationParams(ITEMS_PER_PAGE);
+  const confirmLogin = useLoginConfirm();
 
   const getFeedQueryOption =
     currentState.tab === 'personal' && token
@@ -61,22 +62,16 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
 
   const handleFavoriteArticle = (slug: string) => {
     if (!favoriteMutations) {
-      const isConfirmed = window.confirm(
-        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
-      );
-      if (!isConfirmed) return;
-      return navigate('/login');
+      confirmLogin();
+      return;
     }
     favoriteMutations.favoriteArticle.mutate(slug);
   };
 
   const handleUnfavoriteArticle = (slug: string) => {
     if (!favoriteMutations) {
-      const isConfirmed = window.confirm(
-        '로그인이 필요합니다. \n 로그인 하러 가시겠습니까?',
-      );
-      if (!isConfirmed) return;
-      return navigate('/login');
+      confirmLogin();
+      return;
     }
     favoriteMutations.unfavoriteArticle.mutate(slug);
   };
@@ -90,7 +85,11 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   const tags = tagsQuery.data?.tags || [];
 
   if (articlesQuery.isLoading) {
-    return <div className="article-preview">Loading...</div>;
+    return (
+      <div className="p-4 text-center text-gray-600 dark:text-gray-400">
+        Loading...
+      </div>
+    );
   }
 
   if (articlesQuery.isError || tagsQuery.isError) {
@@ -103,7 +102,7 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   const currentPage = Math.floor(currentState.offset / ITEMS_PER_PAGE);
 
   const handlePageClick = (event: {selected: number}) => {
-    setPage(event.selected);
+    setOffset(event.selected);
   };
 
   const handleTagClick = (tag: string) => {
@@ -121,19 +120,19 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
   };
 
   return (
-    <div className="container page">
-      <div className="row">
-        <div className="col-md-9">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* 태그 사이드바를 위한 더미 div */}
+        <div className="hidden lg:block lg:w-64"></div>
+
+        {/* 메인 콘텐츠 영역 */}
+        <div className="flex-1 max-w-3xl mx-auto w-full">
           <FeedToggle
             params={{tab: currentState.tab, tag: currentState.tag}}
             isLoggedIn={isLoggedIn}
             onTabChange={handleTabChange}
             disabled={isFetching}
           />
-
-          {isFetching ? (
-            <div className="article-preview">Updating...</div>
-          ) : null}
 
           <ArticleList
             articles={articles}
@@ -142,21 +141,22 @@ const PagenatedAticles = ({}: PagenatedAticlesProps) => {
             isPending={favoriteMutations?.isPending || false}
           />
 
-          <ReactPaginate
-            pageCount={pageCount}
-            onPageChange={handlePageClick}
-            forcePage={currentPage}
-            containerClassName="pagination"
-            pageClassName="page-item"
-            pageLinkClassName="page-link"
-            activeClassName="active"
-            previousLabel=""
-            previousClassName="disabled"
-            nextClassName="disabled"
-            nextLabel=""
-          />
+          <LoadingIndicator isFetching={isFetching} />
 
-          <SelectTag tags={tags} onTagClick={handleTagClick} />
+          <div className="mt-8">
+            <Pagination
+              pageCount={pageCount}
+              currentPage={currentPage}
+              onPageChange={handlePageClick}
+            />
+          </div>
+        </div>
+
+        {/* 태그 사이드바 */}
+        <div className="lg:w-64 w-full ">
+          <div className="lg:sticky lg:top-24">
+            <SelectTag tags={tags} onTagClick={handleTagClick} />
+          </div>
         </div>
       </div>
     </div>

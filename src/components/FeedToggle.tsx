@@ -13,7 +13,6 @@ interface FeedToggleProps {
 const FeedToggle = ({params, isLoggedIn, onTabChange}: FeedToggleProps) => {
   const [searchParams] = useSearchParams();
 
-  // Link의 state prop을 통해 클릭 이벤트 감지
   const handleStateChange = (e: any) => {
     const tab = new URLSearchParams(e.currentTarget.getAttribute('to')).get(
       'tab',
@@ -21,38 +20,46 @@ const FeedToggle = ({params, isLoggedIn, onTabChange}: FeedToggleProps) => {
     if (tab) onTabChange(tab);
   };
 
+  const baseTabStyle = 'inline-block px-4 py-2 transition-colors duration-200';
+  const activeTabStyle =
+    'text-brand-primary border-b-2 border-brand-primary font-medium dark:text-brand-primary';
+  const inactiveTabStyle =
+    'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300';
+
   return (
-    <div className="feed-toggle">
-      <ul className="nav nav-pills outline-active">
+    <nav>
+      <ul className="flex flex-wrap gap-x-1">
         {isLoggedIn && (
-          <li className="nav-item">
+          <li>
             <Link
               to="?tab=personal"
               state={{from: searchParams.toString()}}
               onClick={handleStateChange}
-              className={`nav-link ${params.tab === 'personal' ? 'active' : ''}`}
+              className={`${baseTabStyle} ${params.tab === 'personal' ? activeTabStyle : inactiveTabStyle}`}
             >
               Your Feed
             </Link>
           </li>
         )}
-        <li className="nav-item">
+        <li>
           <Link
             to="?tab=global"
             state={{from: searchParams.toString()}}
             onClick={handleStateChange}
-            className={`nav-link ${params.tab === 'global' ? 'active' : ''}`}
+            className={`${baseTabStyle} ${params.tab === 'global' && !params.tag ? activeTabStyle : inactiveTabStyle}`}
           >
             Global Feed
           </Link>
         </li>
-        {params.tab === 'tag' && (
-          <li className="nav-item">
-            <span className="nav-link active">{`#${params.tag}`}</span>
+        {params.tag && (
+          <li>
+            <span className={`${baseTabStyle} ${activeTabStyle}`}>
+              #{params.tag}
+            </span>
           </li>
         )}
       </ul>
-    </div>
+    </nav>
   );
 };
 

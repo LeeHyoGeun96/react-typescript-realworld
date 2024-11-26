@@ -1,6 +1,10 @@
 import {StrictMode, Suspense} from 'react';
 import {createRoot} from 'react-dom/client';
-import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  ScrollRestoration,
+} from 'react-router-dom';
 
 import './index.css';
 import IndexPage from './routes/home.tsx';
@@ -28,8 +32,17 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootPage />,
     errorElement: <ErrorLayout />,
+    element: (
+      <>
+        <RootPage />
+        <ScrollRestoration
+          getKey={(location, _) => {
+            return location.key;
+          }}
+        />
+      </>
+    ),
     loader: rootLoader(queryClient),
     children: [
       {

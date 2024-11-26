@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
 import {Comment} from '../types/articleTypes';
+import Avatar from './Avatar';
 
 interface CommentCardProps {
   comment: Comment;
@@ -24,10 +25,11 @@ const CommentCard = ({
           to={`/profile/${comment.author.username}`}
           className="comment-author"
         >
-          <img
-            src={comment.author.image ?? ''}
-            className="comment-author-img"
-            alt={comment.author.username}
+          <Avatar
+            username={comment.author.username}
+            image={comment.author.image}
+            size="sm"
+            className="mr-1"
           />
         </Link>
         &nbsp;
@@ -43,11 +45,11 @@ const CommentCard = ({
         {canModify && (
           <div className="mod-options">
             <button
-              className="btn btn-sm btn-outline-danger"
+              className="btn btn-sm btn-outline-danger "
               onClick={onDelete}
               disabled={isDeletePending}
             >
-              <i className="ion-trash-a"></i>
+              <i className="ion-trash-a mr-1"></i>
             </button>
           </div>
         )}
