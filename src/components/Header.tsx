@@ -5,15 +5,13 @@ import Avatar from './Avatar';
 import DarkModeToggle from './DarkModeToggle';
 import {CurrentUserType} from '../store/userStore';
 
-interface HeaderProps {}
-
 interface NavLinksProps {
   isLoggedIn: boolean;
   user?: CurrentUserType;
   isMobile?: boolean;
 }
 
-const Header = ({}: HeaderProps) => {
+const Header = () => {
   const {isLoggedIn, user} = useUserStore();
 
   useEffect(() => {

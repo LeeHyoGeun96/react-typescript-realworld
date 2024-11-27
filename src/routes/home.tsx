@@ -1,8 +1,6 @@
 import PagenatedAticles from '../components/PagenatedAticles';
 
-interface HomePageProps {}
-
-const HomePage = ({}: HomePageProps) => {
+const HomePage = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <div className="bg-brand-primary dark:bg-gray-800 shadow-inner">

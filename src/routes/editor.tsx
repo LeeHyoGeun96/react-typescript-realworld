@@ -102,9 +102,7 @@ export const action =
     }
   };
 
-interface EditorPageProps {}
-
-const EditorPage = ({}: EditorPageProps) => {
+const EditorPage = () => {
   const {slug} = useParams();
   const loaderData = slug ? (useLoaderData() as ArticleType) : null;
   const actionData = useActionData() as NetworkError | undefined;

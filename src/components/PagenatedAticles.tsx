@@ -14,11 +14,9 @@ import LoadingIndicator from './LoadingIndicator';
 import {useLoginConfirm} from '../hooks/useLoginConfirm';
 import Pagination from './Pagination';
 
-interface PagenatedAticlesProps {}
-
 const ITEMS_PER_PAGE = 10;
 
-const PagenatedAticles = ({}: PagenatedAticlesProps) => {
+const PagenatedAticles = () => {
   const {isLoggedIn, token} = useUserStore();
   const {currentState, setOffset, setFilter} =
     usePaginationParams(ITEMS_PER_PAGE);

@@ -27,9 +27,7 @@ export const loader = (queryClient: QueryClient) => async () => {
   }
 };
 
-interface RootPageProps {}
-
-const RootPage = ({}: RootPageProps) => {
+const RootPage = () => {
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-gray-900">
       <Header />
