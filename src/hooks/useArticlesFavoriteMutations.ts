@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {articleService} from '../services/article.service';
-import {Article} from '../types/articleTypes';
+import {ArticleType} from '../types/articleTypes';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 
 type ArticlesQueryKey = ReturnType<typeof QUERY_KEYS.articles.all>;
@@ -27,7 +27,7 @@ export const useArticlesFavoriteMutations = ({
 
       queryClient.setQueryData(queryKey, (old: any) => ({
         ...old,
-        articles: old.articles.map((article: Article) =>
+        articles: old.articles.map((article: ArticleType) =>
           article.slug === slug
             ? {
                 ...article,
@@ -57,7 +57,7 @@ export const useArticlesFavoriteMutations = ({
 
       queryClient.setQueryData(queryKey, (old: any) => ({
         ...old,
-        articles: old.articles.map((article: Article) =>
+        articles: old.articles.map((article: ArticleType) =>
           article.slug === slug
             ? {
                 ...article,

@@ -1,9 +1,9 @@
 import {Link} from 'react-router-dom';
-import {Comment} from '../types/articleTypes';
+import {CommentType} from '../types/articleTypes';
 import Avatar from './Avatar';
 
 interface CommentCardProps {
-  comment: Comment;
+  comment: CommentType;
   onDelete?: (e: React.MouseEvent) => void;
   isDeletePending?: boolean;
   canModify?: boolean;

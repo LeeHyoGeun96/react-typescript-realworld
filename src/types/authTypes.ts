@@ -1,10 +1,10 @@
-export interface User {
+export interface CurrentUserType {
   user: {
     email: string;
     token: string;
     username: string;
     bio: string;
-    image: string | null;
+    image?: string;
   };
 }
 
@@ -17,7 +17,7 @@ export interface LoginRequestParams {
 
 export type LoginDTO = LoginRequestParams;
 
-export type LoginResponse = User;
+export type LoginResponse = CurrentUserType;
 
 export interface SignupFormDataType {
   username: string;
@@ -30,7 +30,7 @@ export interface SignupDTO {
 
 export type SignupRequestParams = SignupFormDataType;
 
-export type SignupResponse = User;
+export type SignupResponse = CurrentUserType;
 
 export interface ValidationErrors {
   [key: string]: string[];
@@ -46,4 +46,4 @@ export interface UpdateUserRequest {
   };
 }
 
-export type UpdateUserResponse = User;
+export type UpdateUserResponse = CurrentUserType;

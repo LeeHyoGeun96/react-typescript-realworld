@@ -9,7 +9,7 @@ interface HeaderProps {}
 
 interface NavLinksProps {
   isLoggedIn: boolean;
-  user: CurrentUserType | null;
+  user?: CurrentUserType;
   isMobile?: boolean;
 }
 

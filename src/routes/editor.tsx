@@ -16,7 +16,7 @@ import {useUserStore} from '../store/userStore';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {ErrorDisplay} from '../components/ErrorDisplay';
-import {Article} from '../types/articleTypes';
+import {ArticleType} from '../types/articleTypes';
 import {deepEqual} from '../util/deepEqual';
 import {useEffect, useState} from 'react';
 import {Input} from '../components/Input';
@@ -106,7 +106,7 @@ interface EditorPageProps {}
 
 const EditorPage = ({}: EditorPageProps) => {
   const {slug} = useParams();
-  const loaderData = slug ? (useLoaderData() as Article) : null;
+  const loaderData = slug ? (useLoaderData() as ArticleType) : null;
   const actionData = useActionData() as NetworkError | undefined;
   const [error, setError] = useState<NetworkError | undefined>(undefined);
   const submit = useSubmit();
