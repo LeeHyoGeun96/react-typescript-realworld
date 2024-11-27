@@ -1,9 +1,9 @@
 import {Link} from 'react-router-dom';
-import {Article} from '../types/articleTypes';
+import {ArticleType} from '../types/articleTypes';
 import Avatar from './Avatar';
 
 interface ArticleListProps {
-  articles: Article[];
+  articles: ArticleType[];
   favoriteArticle: (slug: string) => void;
   unfavoriteArticle: (slug: string) => void;
   isPending: boolean;

@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {articleService} from '../services/article.service';
-import {GetCommentsByArticleResponse, Comment} from '../types/articleTypes';
+import {GetCommentsByArticleResponse, CommentType} from '../types/articleTypes';
 import {useUserStore} from '../store/userStore';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 
@@ -66,7 +66,7 @@ const useCommentMutations = ({token, slug}: UseCommentMutationsParams) => {
         queryKey,
         (old: GetCommentsByArticleResponse) => ({
           comments: (old?.comments ?? []).filter(
-            (comment: Comment) => comment.id !== commentId,
+            (comment: CommentType) => comment.id !== commentId,
           ),
         }),
       );

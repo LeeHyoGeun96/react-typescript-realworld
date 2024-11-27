@@ -1,4 +1,12 @@
-export interface Article {
+// 도메인 타입들
+export interface AuthorType {
+  username: string;
+  bio?: string;
+  image?: string;
+  following: boolean;
+}
+
+export interface ArticleType {
   title: string;
   slug: string;
   body: string;
@@ -7,34 +15,16 @@ export interface Article {
   updatedAt: Date;
   tagList: string[];
   favoritesCount: number;
-  favorited: boolean; // 항상 포함 (미인증시 false)
-  author: {
-    username: string;
-    bio: string | null;
-    image: string | null;
-    following: boolean; // 항상 포함 (미인증시 false)
-  };
-}
-
-export interface AuthenticatedArticle extends Article {
   favorited: boolean;
-  author: {
-    username: string;
-    bio: string | null;
-    image: string | null;
-    following: boolean;
-  };
+  author: AuthorType;
 }
 
-export interface GetUniqueArticleRequestParams {
-  slug: string;
-  token?: string;
-}
-
-export type GetUniqueArticleDTO = Omit<GetUniqueArticleRequestParams, 'token'>;
-
-export interface GetUniqueArticleResponse {
-  article: Article;
+export interface CommentType {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  body: string;
+  author: AuthorType;
 }
 
 export interface ArticleFormType {
@@ -44,15 +34,15 @@ export interface ArticleFormType {
   tagList: string[];
 }
 
+// API 요청 파라미터 타입들
+export interface GetUniqueArticleRequestParams {
+  slug: string;
+  token?: string;
+}
+
 export interface CreateArticleRequestParams {
   article: ArticleFormType;
   token: string;
-}
-
-export type CreateArticleDTO = Omit<CreateArticleRequestParams, 'token'>;
-
-export interface CreateArticleResponse {
-  article: Article;
 }
 
 export interface UpdateArticleRequestParams {
@@ -61,98 +51,35 @@ export interface UpdateArticleRequestParams {
   token: string;
 }
 
-export type UpdateArticleDTO = Omit<
-  UpdateArticleRequestParams,
-  'token' | 'slug'
->;
-
-export interface UpdateArticleResponse {
-  article: Article;
-}
-
 export interface DeleteArticleRequestParams {
   slug: string;
   token: string;
 }
 
-// 요청 파라미터 타입
 export interface GetCommentsByArticleRequestParams {
   slug: string;
   token?: string;
 }
 
-// 댓글 작성자 타입
-export interface CommentAuthor {
-  username: string;
-  bio: string | null;
-  image: string | null;
-  following: boolean;
-}
-
-// 댓글 타입
-export interface Comment {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  body: string;
-  author: CommentAuthor;
-}
-
-// API 응답 타입
-export interface GetCommentsByArticleResponse {
-  comments: Comment[];
-}
-
-// 요청 타입
-export interface AddCommentDTO {
-  comment: {
-    body: string;
-  };
-}
-
-// 응답 타입
-export interface Comment {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  body: string;
-  author: {
-    username: string;
-    bio: string | null;
-    image: string | null;
-    following: boolean;
-  };
-}
-
-export interface AddCommentResponse {
-  comment: Comment;
-}
-
-// 서비스 함수 파라미터 타입
 export interface AddCommentRequestParams {
   comment: string;
   slug: string;
   token: string;
 }
 
-export type DeleteCommentRequestParams = {
+export interface DeleteCommentRequestParams {
   slug: string;
   id: number;
   token: string;
-};
+}
 
-export type ArticlesQueryRequestParams = {
+export interface ArticlesQueryRequestParams {
   token?: string;
   tag?: string;
   author?: string;
   favorited?: string;
   offset: number;
   limit: number;
-};
-
-export interface ArticlesResponse {
-  articles: Article[];
-  articlesCount: number;
 }
 
 export interface FeedQueryRequestParams {
@@ -161,20 +88,62 @@ export interface FeedQueryRequestParams {
   token: string;
 }
 
-export interface FeedQueryResponse {
-  articles: Article[];
-  articlesCount: number;
-}
-
 export interface FavoriteArticleRequestParams {
   slug: string;
   token: string;
 }
 
-export interface FavoriteArticleResponse {
-  article: Article;
+// API 응답 타입들
+export interface GetUniqueArticleResponse {
+  article: ArticleType;
 }
 
-export type UnfavoriteArticleRequestParams = FavoriteArticleRequestParams;
+export interface CreateArticleResponse {
+  article: ArticleType;
+}
 
+export interface UpdateArticleResponse {
+  article: ArticleType;
+}
+
+export interface GetCommentsByArticleResponse {
+  comments: CommentType[];
+}
+
+export interface AddCommentResponse {
+  comment: CommentType;
+}
+
+export interface ArticlesResponse {
+  articles: ArticleType[];
+  articlesCount: number;
+}
+
+export interface FeedQueryResponse {
+  articles: ArticleType[];
+  articlesCount: number;
+}
+
+export interface FavoriteArticleResponse {
+  article: ArticleType;
+}
+
+// DTO 타입들
+export type GetUniqueArticleDTO = Omit<GetUniqueArticleRequestParams, 'token'>;
+
+export type CreateArticleDTO = Omit<CreateArticleRequestParams, 'token'>;
+
+export type UpdateArticleDTO = Omit<
+  UpdateArticleRequestParams,
+  'token' | 'slug'
+>;
+
+export type AddCommentDTO = {
+  comment: {
+    body: string;
+  };
+};
+
+// 재사용 타입들
+export type UnfavoriteArticleRequestParams = FavoriteArticleRequestParams;
 export type UnfavoriteArticleResponse = FavoriteArticleResponse;

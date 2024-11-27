@@ -6,8 +6,8 @@ export interface ErrorResponse {
 
 interface ProfileType {
   username: string;
-  bio: string;
-  image: string | null;
+  bio?: string;
+  image?: string;
   following: boolean;
   isCurrentUser: boolean;
 }

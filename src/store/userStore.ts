@@ -3,16 +3,16 @@ import {createJSONStorage, persist} from 'zustand/middleware';
 import {immer} from 'zustand/middleware/immer';
 
 export interface CurrentUserType {
-  username: string | null;
-  email: string | null;
-  bio: string | null;
-  image: string | null;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
 }
 
 interface State {
   isLoggedIn: boolean;
-  user: CurrentUserType | null;
-  token: string | null;
+  user?: CurrentUserType;
+  token?: string;
 }
 
 interface Actions {
@@ -22,8 +22,8 @@ interface Actions {
 
 const initialState: State = {
   isLoggedIn: false,
-  user: null,
-  token: null,
+  user: undefined,
+  token: undefined,
 };
 
 export const useUserStore = create<State & Actions>()(

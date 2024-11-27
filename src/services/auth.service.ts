@@ -4,7 +4,7 @@ import {
   LoginResponse,
   UpdateUserRequest,
   UpdateUserResponse,
-  User,
+  CurrentUserType,
   SignupDTO,
   SignupRequestParams,
   LoginRequestParams,
@@ -21,7 +21,7 @@ export const authService = {
   },
 
   getCurrentUser: (token: string) => {
-    return apiClient.get<User, void>('/user', {
+    return apiClient.get<CurrentUserType, void>('/user', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
