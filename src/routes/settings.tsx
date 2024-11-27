@@ -8,9 +8,7 @@ import LoadingIndicator from '../components/LoadingIndicator';
 import {Input} from '../components/Input';
 import {useUserStore} from '../store/userStore';
 
-interface SettingsPageProps {}
-
-const SettingsPage = ({}: SettingsPageProps) => {
+const SettingsPage = () => {
   const user = useUserStore.getState().user;
   const {token, login, logout} = useUserStore();
   const updateUserMutation = useMutation({

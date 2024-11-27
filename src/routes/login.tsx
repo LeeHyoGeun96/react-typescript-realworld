@@ -37,9 +37,7 @@ export const action =
     }
   };
 
-interface LoginPageProps {}
-
-const LoginPage = ({}: LoginPageProps) => {
+const LoginPage = () => {
   const errors = useActionData() as NetworkError | undefined;
 
   return <AuthForm type="login" errors={errors} />;

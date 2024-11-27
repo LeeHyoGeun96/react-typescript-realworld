@@ -35,9 +35,7 @@ export const action =
     }
   };
 
-interface RegisterPageProps {}
-
-const RegisterPage = ({}: RegisterPageProps) => {
+const RegisterPage = () => {
   const errors = useActionData() as NetworkError | undefined;
   console.log(errors);
 

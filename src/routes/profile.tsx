@@ -13,11 +13,9 @@ import Avatar from '../components/Avatar';
 import {useLoginConfirm} from '../hooks/useLoginConfirm';
 import Pagination from '../components/Pagination';
 
-interface ProfilePageProps {}
-
 const ITEMS_PER_PAGE = 10;
 
-const ProfilePage = ({}: ProfilePageProps) => {
+const ProfilePage = () => {
   const {token, user: loggedInUser} = useUserStore();
 
   const {username} = useParams();

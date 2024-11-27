@@ -49,9 +49,7 @@ export const loader =
     }
   };
 
-interface ArticlePageProps {}
-
-const ArticlePage = ({}: ArticlePageProps) => {
+const ArticlePage = () => {
   const loaderData = useLoaderData() as {
     token: string | null;
     slug: string;
