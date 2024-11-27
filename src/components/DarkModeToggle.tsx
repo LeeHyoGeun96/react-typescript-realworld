@@ -1,4 +1,4 @@
-import useDarkModeStore from '../store/slices/darkModeSlice';
+import useDarkModeStore from '../store/darkModeStore';
 
 const DarkModeToggle = () => {
   const {isDark, toggle} = useDarkModeStore();

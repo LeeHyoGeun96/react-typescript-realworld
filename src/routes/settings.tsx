@@ -1,22 +1,23 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {useNavigate} from 'react-router-dom';
-import {useBoundStore} from '../store';
 import {authService} from '../services/auth.service';
 import NetworkError from '../errors/NetworkError';
 import {UpdateUserRequest} from '../types/authTypes';
 import {ErrorDisplay} from '../components/ErrorDisplay';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {Input} from '../components/Input';
+import {useUserStore} from '../store/userStore';
 
 interface SettingsPageProps {}
 
 const SettingsPage = ({}: SettingsPageProps) => {
-  const user = useBoundStore.getState().user;
+  const user = useUserStore.getState().user;
+  const {token, login, logout} = useUserStore();
   const updateUserMutation = useMutation({
     mutationFn: ({data, token}: {data: UpdateUserRequest; token: string}) =>
       authService.updateUser(data, token),
     onSuccess: (data) => {
-      useBoundStore.getState().login(data.user, data.user.token);
+      login(data.user, data.user.token);
       window.alert('User updated successfully');
     },
     onError: (error) => {
@@ -32,7 +33,6 @@ const SettingsPage = ({}: SettingsPageProps) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
-    const token = useBoundStore.getState().token;
     if (!token) {
       return;
     }
@@ -64,7 +64,7 @@ const SettingsPage = ({}: SettingsPageProps) => {
   const queryClient = useQueryClient();
 
   const handleLogout = async () => {
-    useBoundStore.getState().logout();
+    logout();
     await queryClient.invalidateQueries({queryKey: ['auth']});
     navigate('/', {replace: true});
   };

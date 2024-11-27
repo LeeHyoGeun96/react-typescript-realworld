@@ -1,14 +1,12 @@
 import {Outlet} from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import {QueryClient} from '@tanstack/react-query';
 import {authQueryOptions} from '../queryOptions/authQueryOptions';
 
 export const loader = (queryClient: QueryClient) => async () => {
-  const token = useBoundStore.getState().token;
-  const loginFn = useBoundStore.getState().login;
-  const logoutFn = useBoundStore.getState().logout;
+  const {token, login: loginFn, logout: logoutFn} = useUserStore.getState();
 
   if (!token) {
     logoutFn();

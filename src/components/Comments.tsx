@@ -1,6 +1,6 @@
 import {useQuery} from '@tanstack/react-query';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import {useState} from 'react';
 import useCommentMutations from '../hooks/useCommentMutations';
 import CommentForm from './CommentForm';
@@ -9,11 +9,10 @@ import {useLoginConfirm} from '../hooks/useLoginConfirm';
 
 const Comments = ({slug}: {slug: string}) => {
   const [commentText, setCommentText] = useState('');
-  const {token} = useBoundStore((state) => state);
+  const {token, user: loggedInUser} = useUserStore();
   const {data, isPending: isCommentsPending} = useQuery(
     articleQueryOptions.getComments({slug, token: token ?? undefined}),
   );
-  const loggedInUser = useBoundStore((state) => state.user);
   const confirmLogin = useLoginConfirm();
   const commentMutations = token
     ? useCommentMutations({

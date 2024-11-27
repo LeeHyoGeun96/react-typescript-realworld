@@ -1,6 +1,6 @@
 import {useQuery} from '@tanstack/react-query';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import NetworkError from '../errors/NetworkError';
 import SelectTag from './SelectTag';
 import {tagQueryOptions} from '../queryOptions/tagQueryOptions';
@@ -19,8 +19,7 @@ interface PagenatedAticlesProps {}
 const ITEMS_PER_PAGE = 10;
 
 const PagenatedAticles = ({}: PagenatedAticlesProps) => {
-  const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
-  const token = useBoundStore((state) => state.token);
+  const {isLoggedIn, token} = useUserStore();
   const {currentState, setOffset, setFilter} =
     usePaginationParams(ITEMS_PER_PAGE);
   const confirmLogin = useLoginConfirm();
