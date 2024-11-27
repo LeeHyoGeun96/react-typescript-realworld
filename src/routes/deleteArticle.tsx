@@ -1,6 +1,6 @@
 import {ActionFunctionArgs, redirect} from 'react-router-dom';
 import {QueryClient} from '@tanstack/react-query';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import NetworkError from '../errors/NetworkError';
 import {articleService} from '../services/article.service';
 
@@ -8,7 +8,7 @@ export const action =
   (queryClient: QueryClient) =>
   async ({params}: ActionFunctionArgs) => {
     const {slug} = params;
-    const token = useBoundStore.getState().token;
+    const {token} = useUserStore();
 
     if (!slug) {
       throw new NetworkError({code: 400, message: 'slug가 필요합니다.'});

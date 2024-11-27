@@ -1,7 +1,7 @@
 import {useSuspenseQuery} from '@tanstack/react-query';
 import {Link, NavLink, useMatch, useParams} from 'react-router-dom';
 import {profileQueryOptions} from '../queryOptions/profileQueryOptions';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {usePaginationParams} from '../hooks/usePaginationParams';
@@ -18,7 +18,7 @@ interface ProfilePageProps {}
 const ITEMS_PER_PAGE = 10;
 
 const ProfilePage = ({}: ProfilePageProps) => {
-  const token = useBoundStore((state) => state.token);
+  const {token, user: loggedInUser} = useUserStore();
 
   const {username} = useParams();
   const favoritesMatch = useMatch(`profile/${username}/favorites`);
@@ -109,8 +109,6 @@ const ProfilePage = ({}: ProfilePageProps) => {
   const pageCount = Math.ceil(articlesCount / ITEMS_PER_PAGE);
   const currentPage = Math.floor(currentState.offset / ITEMS_PER_PAGE);
   console.log(pageCount, currentPage);
-
-  const loggedInUser = useBoundStore((state) => state.user);
   const isSameUser = loggedInUser?.username === username;
 
   if (!username || !token) {

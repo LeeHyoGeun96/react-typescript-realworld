@@ -1,5 +1,5 @@
 import {QueryClient, useSuspenseQuery} from '@tanstack/react-query';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {Form, Link, LoaderFunctionArgs, useLoaderData} from 'react-router-dom';
@@ -17,7 +17,7 @@ export const loader =
   (queryClient: QueryClient) =>
   async ({params}: LoaderFunctionArgs) => {
     const {slug} = params;
-    const token = useBoundStore.getState().token;
+    const {token} = useUserStore();
     let articleResponse = null;
     if (!slug) {
       return new NetworkError({code: 400, message: 'slug가 필요합니다.'});
@@ -64,7 +64,7 @@ const ArticlePage = ({}: ArticlePageProps) => {
     }),
   );
 
-  const loggedInUser = useBoundStore((state) => state.user);
+  const {user: loggedInUser} = useUserStore();
 
   const {article} = articleQuery.data;
 

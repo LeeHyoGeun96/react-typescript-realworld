@@ -1,15 +1,15 @@
-import { ActionFunctionArgs, redirect, useActionData } from 'react-router-dom';
+import {ActionFunctionArgs, redirect, useActionData} from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
-import { QueryClient } from '@tanstack/react-query';
+import {QueryClient} from '@tanstack/react-query';
 import NetworkError from '../errors/NetworkError';
-import { authQueryOptions } from '../queryOptions/authQueryOptions';
-import { useBoundStore } from '../store';
+import {authQueryOptions} from '../queryOptions/authQueryOptions';
+import {useUserStore} from '../store/userStore';
 
 export const action =
   (queryClient: QueryClient) =>
-  async ({ request }: ActionFunctionArgs) => {
+  async ({request}: ActionFunctionArgs) => {
     const formData = await request.formData();
-    const loginFn = useBoundStore.getState().login;
+    const {login: loginFn} = useUserStore.getState();
     if (!formData.get('email') || !formData.get('password')) {
       return new NetworkError({
         code: 400,
@@ -22,9 +22,9 @@ export const action =
 
     try {
       const response = await queryClient.fetchQuery(
-        authQueryOptions.login({ user: { email, password } }),
+        authQueryOptions.login({user: {email, password}}),
       );
-      const { user } = response;
+      const {user} = response;
       loginFn(user, user.token);
 
       return redirect('/');

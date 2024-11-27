@@ -12,7 +12,7 @@ import {
   useSubmit,
 } from 'react-router-dom';
 import {articleService} from '../services/article.service';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import NetworkError from '../errors/NetworkError';
 import {articleQueryOptions} from '../queryOptions/articleQueryOptions';
 import {ErrorDisplay} from '../components/ErrorDisplay';
@@ -28,7 +28,7 @@ export const loader =
       return new NetworkError({code: 404, message: 'slug가 필요합니다.'});
     }
 
-    const token = useBoundStore.getState().token;
+    const {token} = useUserStore();
 
     if (!token) {
       return new NetworkError({code: 401, message: '로그인이 필요합니다.'});
@@ -69,7 +69,7 @@ export const action =
       tagList: JSON.parse(formData.get('tagList') as string),
     };
     console.log(articleData);
-    const token = useBoundStore.getState().token;
+    const {token} = useUserStore();
 
     if (!token) {
       return new NetworkError({code: 401, message: '로그인이 필요합니다.'});

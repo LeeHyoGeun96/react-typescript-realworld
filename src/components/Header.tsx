@@ -1,9 +1,9 @@
 import {Link, NavLink} from 'react-router-dom';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import {useEffect} from 'react';
 import Avatar from './Avatar';
 import DarkModeToggle from './DarkModeToggle';
-import {CurrentUserType} from '../store/slices/userSlice';
+import {CurrentUserType} from '../store/userStore';
 
 interface HeaderProps {}
 
@@ -14,8 +14,7 @@ interface NavLinksProps {
 }
 
 const Header = ({}: HeaderProps) => {
-  const isLoggedIn = useBoundStore((state) => state.isLoggedIn);
-  const user = useBoundStore((state) => state.user);
+  const {isLoggedIn, user} = useUserStore();
 
   useEffect(() => {
     const mobileHeader = document.getElementById('mobile-header');

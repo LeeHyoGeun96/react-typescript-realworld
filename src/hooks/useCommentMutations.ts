@@ -1,7 +1,7 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {articleService} from '../services/article.service';
 import {GetCommentsByArticleResponse, Comment} from '../types/articleTypes';
-import {useBoundStore} from '../store';
+import {useUserStore} from '../store/userStore';
 import {QUERY_KEYS} from '../queryOptions/constants/queryKeys';
 
 interface UseCommentMutationsParams {
@@ -12,6 +12,7 @@ interface UseCommentMutationsParams {
 const useCommentMutations = ({token, slug}: UseCommentMutationsParams) => {
   const queryClient = useQueryClient();
   const queryKey = QUERY_KEYS.article.comments(slug, token);
+  const {user: loggedInUser} = useUserStore();
 
   const addCommentMutation = useMutation({
     mutationFn: (commentText: string) =>
@@ -29,8 +30,8 @@ const useCommentMutations = ({token, slug}: UseCommentMutationsParams) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         author: {
-          username: useBoundStore.getState().user?.username ?? '',
-          image: useBoundStore.getState().user?.image ?? '',
+          username: loggedInUser?.username ?? '',
+          image: loggedInUser?.image ?? '',
         },
       };
 

@@ -1,4 +1,4 @@
-import {CurrentUserType} from '../store/slices/userSlice';
+import {CurrentUserType} from '../store/userStore';
 import {Article} from '../types/articleTypes';
 
 /**
