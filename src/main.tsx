@@ -2,6 +2,7 @@ import {StrictMode, Suspense} from 'react';
 import {createRoot} from 'react-dom/client';
 import {
   createBrowserRouter,
+  Outlet,
   RouterProvider,
   ScrollRestoration,
 } from 'react-router-dom';
@@ -70,16 +71,16 @@ const router = createBrowserRouter([
 
       {
         path: '/editor',
-
+        element: (
+          <ProtectedRoute>
+            <Outlet />
+          </ProtectedRoute>
+        ), // 추가: 모든 editor 경로에 대해 인증 체크
         action: editorAction(queryClient),
         children: [
           {
             index: true,
-            element: (
-              <ProtectedRoute>
-                <EditorPage />
-              </ProtectedRoute>
-            ),
+            element: <EditorPage />,
             action: editorAction(queryClient),
           },
           {

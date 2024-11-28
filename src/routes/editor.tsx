@@ -28,7 +28,7 @@ export const loader =
       return new NetworkError({code: 404, message: 'slug가 필요합니다.'});
     }
 
-    const {token} = useUserStore();
+    const {token} = useUserStore.getState();
 
     if (!token) {
       return new NetworkError({code: 401, message: '로그인이 필요합니다.'});
@@ -68,8 +68,7 @@ export const action =
       body: formData.get('body') as string,
       tagList: JSON.parse(formData.get('tagList') as string),
     };
-    console.log(articleData);
-    const {token} = useUserStore();
+    const {token} = useUserStore.getState();
 
     if (!token) {
       return new NetworkError({code: 401, message: '로그인이 필요합니다.'});
