@@ -17,7 +17,7 @@ export const loader =
   (queryClient: QueryClient) =>
   async ({params}: LoaderFunctionArgs) => {
     const {slug} = params;
-    const {token} = useUserStore();
+    const {token} = useUserStore.getState();
     let articleResponse = null;
     if (!slug) {
       return new NetworkError({code: 400, message: 'slug가 필요합니다.'});
