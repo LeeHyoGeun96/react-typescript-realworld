@@ -106,7 +106,6 @@ const ProfilePage = () => {
 
   const pageCount = Math.ceil(articlesCount / ITEMS_PER_PAGE);
   const currentPage = Math.floor(currentState.offset / ITEMS_PER_PAGE);
-  console.log(pageCount, currentPage);
   const isSameUser = loggedInUser?.username === username;
 
   if (!username || !token) {

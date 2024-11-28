@@ -142,7 +142,7 @@ const EditorPage = () => {
     ]);
 
     if (isNotChanged) {
-      console.log('변경사항이 있어야 합니다');
+      window.alert('변경사항이 있어야 합니다');
       return;
     }
 
