@@ -173,6 +173,7 @@ const EditorPage = () => {
                     placeholder="Article Title"
                     defaultValue={article.title}
                     name="title"
+                    required
                   />
                 </div>
 
@@ -186,6 +187,7 @@ const EditorPage = () => {
                     placeholder="What's this article about?"
                     defaultValue={article.description}
                     name="description"
+                    required
                   />
                 </div>
 
@@ -200,6 +202,7 @@ const EditorPage = () => {
                     defaultValue={article.body}
                     name="body"
                     className="min-h-[200px]"
+                    required
                   />
                 </div>
 
