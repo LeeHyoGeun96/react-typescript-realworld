@@ -27,6 +27,7 @@ const TagInput = ({tags, onAddTag, onRemoveTag}: TagInputProps) => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
+        className="mb-4"
       />
       <TagList tags={tags} onRemoveTag={onRemoveTag} />
     </fieldset>
