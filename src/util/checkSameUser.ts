@@ -1,5 +1,5 @@
 import {CurrentUserType} from '../store/userStore';
-import {Article} from '../types/articleTypes';
+import {ArticleType} from '../types/articleTypes';
 
 /**
  * 로그인한 유저와 응답 유저가 같은지 확인하는 함수
@@ -9,7 +9,7 @@ import {Article} from '../types/articleTypes';
  */
 interface CheckSameUserParams {
   loggedInUser: CurrentUserType;
-  responseUser: Article;
+  responseUser: ArticleType;
 }
 
 export const checkSameUser = ({
