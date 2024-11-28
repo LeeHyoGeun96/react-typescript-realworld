@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
+# React + TypeScript RealWorld 프로젝트
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 프로젝트 소개
 
-Currently, two official plugins are available:
+이 프로젝트는 RealWorld 스펙을 기반으로 React와 TypeScript를 사용하여 구현한 블로그 플랫폼입니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ 주요 기능
 
-## Expanding the ESLint configuration
+- 사용자 인증 (로그인/회원가입)
+- 게시글 작성, 수정, 삭제, 조회
+- 댓글 기능
+- 게시글 좋아요
+- 사용자 프로필
+- 다크모드 지원
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 🛠 기술 스택
 
-- Configure the top-level `parserOptions` property like this:
+- React 18
+- TypeScript
+- Vite
+- TailwindCSS
+- React Query
+- Zustand
+- React Router DOM
+- Axios
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+## 🏃‍♂️ 시작하기
+
+### 설치
+
+```
+# 저장소 클론
+git clone [repository-url]
+
+# 의존성 설치
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### 개발 서버 실행
 
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
 ```
+npm run dev
+```
+
+### 빌드
+
+```
+npm run build
+```
+
+## 📝 사용 가능한 스크립트
+
+- `npm run dev`: 개발 서버 실행
+- `npm run build`: 프로덕션 빌드
+- `npm run lint`: ESLint 실행
+- `npm run format`: Prettier로 코드 포맷팅
+
+## 📁 프로젝트 구조
+
+```
+src/
+├── components/     # 재사용 가능한 컴포넌트
+├── pages/         # 페이지 컴포넌트
+├── hooks/         # 커스텀 훅
+├── store/         # 상태 관리
+├── api/           # API 관련 로직
+├── types/         # TypeScript 타입 정의
+└── utils/         # 유틸리티 함수
+```
+
+## 📄 라이선스
+
+이 프로젝트는 MIT 라이선스를 따릅니다. 자세한 내용은 [LICENSE](./LICENSE) 파일을 참고해주세요.
+
+## 🔧 환경 설정
+
+프로젝트 실행을 위해 `.env` 파일이 필요합니다. `.env.example` 파일을 참고하여 설정해주세요.
