@@ -37,7 +37,6 @@ export const action =
 
 const RegisterPage = () => {
   const errors = useActionData() as NetworkError | undefined;
-  console.log(errors);
 
   return <AuthForm type="register" errors={errors} />;
 };

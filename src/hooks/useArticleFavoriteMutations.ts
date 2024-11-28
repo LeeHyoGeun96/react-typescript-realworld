@@ -54,7 +54,6 @@ export const useArticleFavoriteMutations = ({
         queryClient.getQueryData<GetUniqueArticleResponse>(queryKey);
 
       queryClient.setQueryData<GetUniqueArticleResponse>(queryKey, (old) => {
-        console.log(old);
         if (!old) return previousData;
 
         return {
