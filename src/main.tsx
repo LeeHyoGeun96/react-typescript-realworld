@@ -1,4 +1,4 @@
-import {StrictMode, Suspense} from 'react';
+import {StrictMode, Suspense, lazy} from 'react';
 import {createRoot} from 'react-dom/client';
 import {
   createBrowserRouter,
@@ -6,43 +6,51 @@ import {
   RouterProvider,
   ScrollRestoration,
 } from 'react-router-dom';
-
 import './index.css';
-import IndexPage from './routes/home.tsx';
-import LoginPage, {action as loginAction} from './routes/login.tsx';
-import RegisterPage, {action as registerAction} from './routes/register.tsx';
-import SettingsPage from './routes/settings.tsx';
-import EditorPage, {
-  action as editorAction,
-  loader as editorLoader,
-} from './routes/editor.tsx';
-import ArticlePage, {loader as articleLoader} from './routes/article.tsx';
-import ProfilePage from './routes/profile.tsx';
-import RootPage, {loader as rootLoader} from './routes/root.tsx';
-import ProtectedRoute from './components/ProtectedRoute.tsx';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import ErrorLayout from './components/ErrorLayout.tsx';
-import {action as deleteArticleAction} from './routes/deleteArticle';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import {ErrorBoundary} from './components/ErrorBoundary.tsx';
+import RootPage, {loader as rootLoader} from './routes/root.tsx';
+import IndexPage from './routes/home.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
+
+// Lazy load components
+const LoginPage = lazy(() => import('./routes/login.tsx'));
+const RegisterPage = lazy(() => import('./routes/register.tsx'));
+const SettingsPage = lazy(() => import('./routes/settings.tsx'));
+const EditorPage = lazy(() => import('./routes/editor.tsx'));
+const ArticlePage = lazy(() => import('./routes/article.tsx'));
+const ProfilePage = lazy(() => import('./routes/profile.tsx'));
 
 const queryClient = new QueryClient({
-  defaultOptions: {},
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      retry: 1,
+    },
+  },
 });
+
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center min-h-[200px]">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
+  </div>
+);
 
 const router = createBrowserRouter([
   {
     path: '/',
     errorElement: <ErrorLayout />,
     element: (
-      <>
+      <Suspense fallback={<LoadingSpinner />}>
         <RootPage />
         <ScrollRestoration
-          getKey={(location, _) => {
+          getKey={(location) => {
             return location.key;
           }}
         />
-      </>
+      </Suspense>
     ),
     loader: rootLoader(queryClient),
     children: [
@@ -53,12 +61,18 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <LoginPage />,
-        action: loginAction(queryClient),
+        action: async (args) => {
+          const {action} = await import('./routes/login.tsx');
+          return action(queryClient)(args);
+        },
       },
       {
         path: '/register',
         element: <RegisterPage />,
-        action: registerAction(queryClient),
+        action: async (args) => {
+          const {action} = await import('./routes/register.tsx');
+          return action(queryClient)(args);
+        },
       },
       {
         path: '/settings',
@@ -68,75 +82,72 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-
       {
         path: '/editor',
         element: (
           <ProtectedRoute>
             <Outlet />
           </ProtectedRoute>
-        ), // 추가: 모든 editor 경로에 대해 인증 체크
-        action: editorAction(queryClient),
+        ),
         children: [
           {
             index: true,
             element: <EditorPage />,
-            action: editorAction(queryClient),
+            action: async (args) => {
+              const {action} = await import('./routes/editor.tsx');
+              return action(queryClient)(args);
+            },
           },
           {
             path: ':slug',
             element: <EditorPage />,
-            loader: editorLoader(queryClient),
-            action: editorAction(queryClient),
+            loader: async (args) => {
+              const {loader} = await import('./routes/editor.tsx');
+              return loader(queryClient)(args);
+            },
+            action: async (args) => {
+              const {action} = await import('./routes/editor.tsx');
+              return action(queryClient)(args);
+            },
           },
         ],
       },
       {
         path: '/article/:slug',
         element: <ArticlePage />,
-        loader: articleLoader(queryClient),
+        loader: async (args) => {
+          const {loader} = await import('./routes/article.tsx');
+          return loader(queryClient)(args);
+        },
       },
       {
         path: '/deleteArticle/:slug',
-        action: deleteArticleAction(queryClient),
+        action: async (args) => {
+          const {action} = await import('./routes/deleteArticle');
+          return action(queryClient)(args);
+        },
       },
       {
-        path: '/profile/:username',
-        element: (
-          <Suspense fallback={<div>Loading...</div>}>
-            <ProfilePage />
-          </Suspense>
-        ),
-        children: [
-          {
-            path: '',
-            element: (
-              <Suspense fallback={<div>Loading...</div>}>
-                <ProfilePage />
-              </Suspense>
-            ),
-          },
-          {
-            path: 'favorites',
-            element: (
-              <Suspense fallback={<div>Loading...</div>}>
-                <ProfilePage />
-              </Suspense>
-            ),
-          },
-        ],
+        path: '/profile/:username/*',
+        element: <ProfilePage />,
       },
     ],
   },
 ]);
 
-createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools buttonPosition="bottom-right" />
-      </QueryClientProvider>
-    </ErrorBoundary>
-  </StrictMode>,
-);
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <StrictMode>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+          {process.env.NODE_ENV === 'development' && (
+            <ReactQueryDevtools buttonPosition="bottom-right" />
+          )}
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </StrictMode>,
+  );
+}
