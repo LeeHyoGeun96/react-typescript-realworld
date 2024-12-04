@@ -4,11 +4,6 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      screens: {
-        mobile: {max: '768px'},
-        tablet: {min: '769px', max: '1024px'},
-        desktop: {min: '1025px'},
-      },
       colors: {
         'brand-primary': '#5CB85C',
         'brand-danger': '#B85C5C',
@@ -28,5 +23,21 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({addUtilities}) {
+      addUtilities({
+        '.no-scrollbar': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
+        '.touch-scroll': {
+          '-webkit-overflow-scrolling': 'touch',
+          'scroll-behavior': 'smooth',
+        },
+      });
+    },
+  ],
 };
