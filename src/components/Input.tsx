@@ -1,9 +1,14 @@
-import {InputHTMLAttributes} from 'react';
+import {InputHTMLAttributes, TextareaHTMLAttributes} from 'react';
 
-interface InputProps
-  extends InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
-  isTextArea?: boolean;
-}
+type BaseInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  isTextArea?: false;
+};
+
+type BaseTextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  isTextArea: true;
+};
+
+type InputProps = BaseInputProps | BaseTextAreaProps;
 
 export const Input = ({
   isTextArea = false,
@@ -21,9 +26,19 @@ export const Input = ({
 
   const combinedClassName = `${baseClassName} ${className}`;
 
-  return isTextArea ? (
-    <textarea className={combinedClassName} {...props} />
-  ) : (
-    <input className={combinedClassName} {...props} />
+  if (isTextArea) {
+    return (
+      <textarea
+        className={combinedClassName}
+        {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
+      />
+    );
+  }
+
+  return (
+    <input
+      className={combinedClassName}
+      {...(props as InputHTMLAttributes<HTMLInputElement>)}
+    />
   );
 };
