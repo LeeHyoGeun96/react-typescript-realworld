@@ -14,7 +14,7 @@ const CommentForm = ({
   isPending,
 }: CommentFormProps) => (
   <form className="card comment-form" onSubmit={onSubmit}>
-    <div className="card-block">
+    <div className="card-block mb-4">
       <Input
         className="form-control"
         placeholder="Write a comment..."
