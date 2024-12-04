@@ -176,7 +176,9 @@ const ArticlePage = () => {
               aria-label="글 관련 작업"
             >
               <button
-                className="btn btn-sm btn-outline-primary"
+                className={
+                  'btn btn-sm border border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
+                }
                 onClick={article.favorited ? handleUnfavorite : handleFavorite}
                 disabled={favoriteMutations?.isPending || false}
                 aria-pressed={article.favorited}
@@ -194,7 +196,7 @@ const ArticlePage = () => {
               </button>
               {!isSameUser && (
                 <button
-                  className="btn btn-sm btn-outline-secondary"
+                  className="btn btn-sm border"
                   disabled={followMutations?.isPending || false}
                   onClick={
                     profileData?.profile.following
@@ -214,7 +216,7 @@ const ArticlePage = () => {
                 <>
                   <Link
                     to={`/editor/${article.slug}`}
-                    className="btn btn-sm btn-outline-secondary"
+                    className="btn btn-sm border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
                     aria-label="글 수정하기"
                   >
                     <i className="ion-edit" aria-hidden="true"></i> Edit Article
@@ -225,7 +227,7 @@ const ArticlePage = () => {
                     className="inline-block"
                   >
                     <button
-                      className="btn btn-sm btn-outline-danger"
+                      className="btn btn-sm border border-red-700 text-red-700 hover:bg-red-700 hover:text-white"
                       type="submit"
                       aria-label="글 삭제하기"
                     >
