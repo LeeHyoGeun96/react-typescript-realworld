@@ -7,7 +7,21 @@ export default defineConfig(({mode}) => {
   // console.log(env.VITE_API_URL);
   if (mode === 'development') {
     return {
-      plugins: [react()],
+      plugins: [
+        react(),
+        {
+          name: 'html-transform',
+          transformIndexHtml(html) {
+            if (process.env.NODE_ENV === 'development') {
+              return html.replace(
+                '</head>',
+                `<script src="https://unpkg.com/react-scan/dist/auto.global.js"></script></head>`,
+              );
+            }
+            return html;
+          },
+        },
+      ],
       server: {
         proxy: {
           '/api': {
