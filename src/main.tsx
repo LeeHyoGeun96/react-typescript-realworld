@@ -24,12 +24,7 @@ const ArticlePage = lazy(() => import('./routes/article.tsx'));
 const ProfilePage = lazy(() => import('./routes/profile.tsx'));
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000,
-      retry: 1,
-    },
-  },
+  defaultOptions: {},
 });
 
 const LoadingSpinner = () => (
@@ -43,14 +38,14 @@ const router = createBrowserRouter([
     path: '/',
     errorElement: <ErrorLayout />,
     element: (
-      <Suspense fallback={<LoadingSpinner />}>
+      <>
         <RootPage />
         <ScrollRestoration
           getKey={(location) => {
             return location.key;
           }}
         />
-      </Suspense>
+      </>
     ),
     loader: rootLoader(queryClient),
     children: [
@@ -60,7 +55,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/login',
-        element: <LoginPage />,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LoginPage />
+          </Suspense>
+        ),
         action: async (args) => {
           const {action} = await import('./routes/login.tsx');
           return action(queryClient)(args);
@@ -68,7 +67,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/register',
-        element: <RegisterPage />,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <RegisterPage />
+          </Suspense>
+        ),
         action: async (args) => {
           const {action} = await import('./routes/register.tsx');
           return action(queryClient)(args);
@@ -78,7 +81,9 @@ const router = createBrowserRouter([
         path: '/settings',
         element: (
           <ProtectedRoute>
-            <SettingsPage />
+            <Suspense fallback={<LoadingSpinner />}>
+              <SettingsPage />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -86,7 +91,9 @@ const router = createBrowserRouter([
         path: '/editor',
         element: (
           <ProtectedRoute>
-            <Outlet />
+            <Suspense fallback={<LoadingSpinner />}>
+              <Outlet />
+            </Suspense>
           </ProtectedRoute>
         ),
         children: [
@@ -114,7 +121,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/article/:slug',
-        element: <ArticlePage />,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ArticlePage />
+          </Suspense>
+        ),
         loader: async (args) => {
           const {loader} = await import('./routes/article.tsx');
           return loader(queryClient)(args);
@@ -129,7 +140,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/profile/:username/*',
-        element: <ProfilePage />,
+        element: (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ProfilePage />
+          </Suspense>
+        ),
       },
     ],
   },
