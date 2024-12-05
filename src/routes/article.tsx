@@ -196,7 +196,7 @@ const ArticlePage = () => {
               </button>
               {!isSameUser && (
                 <button
-                  className="btn btn-sm border"
+                  className="btn btn-sm border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
                   disabled={followMutations?.isPending || false}
                   onClick={
                     profileData?.profile.following
@@ -205,7 +205,7 @@ const ArticlePage = () => {
                   }
                   aria-pressed={profileData?.profile.following}
                 >
-                  <i className="ion-plus-round" aria-hidden="true"></i>
+                  <i className="ion-plus-round mr-[1px]" aria-hidden="true"></i>
                   <span>
                     {profileData?.profile.following ? 'Unfollow' : 'Follow'}{' '}
                     {article.author.username}
