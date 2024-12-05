@@ -122,6 +122,12 @@ const PagenatedAticles = () => {
         {/* 태그 사이드바를 위한 더미 div */}
         <div className="hidden lg:block lg:w-64"></div>
 
+        <div className="lg:hidden overflow-x-auto -mx-4 px-4">
+          <div className="flex space-x-2 whitespace-nowrap">
+            <SelectTag tags={tags} onTagClick={handleTagClick} />
+          </div>
+        </div>
+
         {/* 메인 콘텐츠 영역 */}
         <div className="flex-1 max-w-3xl mx-auto w-full">
           <FeedToggle
@@ -150,7 +156,7 @@ const PagenatedAticles = () => {
         </div>
 
         {/* 태그 사이드바 */}
-        <div className="lg:w-64 w-full ">
+        <div className="hidden lg:block lg:w-64">
           <div className="lg:sticky lg:top-24">
             <SelectTag tags={tags} onTagClick={handleTagClick} />
           </div>

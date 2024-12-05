@@ -152,7 +152,7 @@ const EditorPage = () => {
   };
 
   return (
-    <main className="bg-white dark:bg-gray-900 py-8">
+    <main className="bg-white dark:bg-gray-900 py-8 ">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <h2 className="sr-only">글 {slug ? '수정' : '작성'}</h2>

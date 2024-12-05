@@ -4,6 +4,8 @@ declare module '*.jpeg';
 declare module '*.gif';
 
 declare module '*.module.css' {
-  const classes: { [key: string]: string };
+  const classes: {[key: string]: string};
   export default classes;
 }
+
+declare module 'tailwind-scrollbar-hide';

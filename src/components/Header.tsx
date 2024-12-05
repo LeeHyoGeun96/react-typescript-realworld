@@ -1,6 +1,5 @@
 import {Link, NavLink} from 'react-router-dom';
 import {useUserStore} from '../store/userStore';
-import {useEffect} from 'react';
 import Avatar from './Avatar';
 import DarkModeToggle from './DarkModeToggle';
 import {CurrentUserType} from '../store/userStore';
@@ -14,40 +13,9 @@ interface NavLinksProps {
 const Header = () => {
   const {isLoggedIn, user} = useUserStore();
 
-  useEffect(() => {
-    const mobileHeader = document.getElementById('mobile-header');
-
-    const handleScroll = () => {
-      if (!mobileHeader) return;
-
-      const scrollHeight = document.documentElement.scrollHeight;
-      const scrollTop = window.scrollY;
-      const clientHeight = document.documentElement.clientHeight;
-
-      // 스크롤이 바닥에 닿았는지 확인
-      const isScrollBottom = scrollHeight - scrollTop <= clientHeight + 1;
-
-      if (isScrollBottom) {
-        mobileHeader.style.transition = 'all 0.2s ease';
-        mobileHeader.style.opacity = '0';
-        mobileHeader.style.transform = 'translateY(100%)';
-      } else {
-        mobileHeader.style.transition = 'all 0.2s ease';
-        mobileHeader.style.opacity = '1';
-        mobileHeader.style.transform = 'translateY(0)';
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return (
     <>
-      <header className="hidden lg:block sticky top-0 bg-white dark:bg-gray-700 shadow-sm z-10">
+      <header className="hidden md:block sticky top-0 bg-white dark:bg-gray-700 shadow-sm z-10">
         <nav className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link className="text-brand-primary text-xl font-bold" to="/">
@@ -62,7 +30,7 @@ const Header = () => {
 
       <header
         id="mobile-header"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-50"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 transition-transform duration-200 ease-in-out"
       >
         <div className="absolute inset-0 bg-white dark:bg-gray-800 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] dark:shadow-[0_-1px_3px_rgba(0,0,0,0.3)]" />
         <nav className="relative container mx-auto px-4">
@@ -135,7 +103,7 @@ const NavLinks = ({isLoggedIn, user, isMobile = false}: NavLinksProps) => {
                 size={isMobile ? 'sm' : 'md'}
                 className={isMobile ? '' : 'mr-1'}
               />
-              <span className="translate-y-[1px] md:-translate-y-[2px] lg:translate-y-[2px]">
+              <span className="translate-y-[1px] lg:translate-y-[2px]">
                 {user?.username}
               </span>
             </NavLink>

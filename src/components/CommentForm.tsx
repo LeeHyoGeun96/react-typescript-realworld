@@ -1,3 +1,5 @@
+import {Input} from './Input';
+
 interface CommentFormProps {
   commentText: string;
   onCommentChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -12,12 +14,13 @@ const CommentForm = ({
   isPending,
 }: CommentFormProps) => (
   <form className="card comment-form" onSubmit={onSubmit}>
-    <div className="card-block">
-      <textarea
+    <div className="card-block mb-4">
+      <Input
         className="form-control"
         placeholder="Write a comment..."
         value={commentText}
         onChange={onCommentChange}
+        isTextArea
         rows={3}
       />
     </div>

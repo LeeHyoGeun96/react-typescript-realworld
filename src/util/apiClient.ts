@@ -28,36 +28,50 @@ export const createApi = (url: string) => {
   instance.interceptors.response.use(
     (response) => response,
     (error: AxiosError<ErrorResponseType>) => {
-      if (error.response) {
-        const {status, data} = error.response;
-
-        // 422 Validation Error 특별 처리
-        if (status === 422 && data.errors) {
+      // error.response가 있는지 타입가드로 체크
+      if (!error.response) {
+        if (!error.request) {
+          // 요청 자체가 실패한 경우
           throw new NetworkError({
-            code: status,
-            message: NetworkError.errorMessages[status],
-            errors: data.errors, // ValidationErrors 타입의 객체 {[key: string]: string[]}
+            code: 0,
+            message: '네트워크 연결을 확인해주세요.',
           });
         }
-
-        // 일반 에러 처리
-        throw new NetworkError({
-          code: status,
-          message:
-            NetworkError.errorMessages[status] || '서버 오류가 발생했습니다.',
-          errors: data.errors,
-        });
-      } else if (error.request) {
+        // 요청은 보냈지만 응답을 받지 못한 경우
         throw new NetworkError({
           code: 503,
-          message: NetworkError.errorMessages[503],
-        });
-      } else {
-        throw new NetworkError({
-          code: 0,
-          message: '인터넷 연결을 확인해주세요.',
+          message:
+            NetworkError.errorMessages[503] || '서버에 연결할 수 없습니다.',
         });
       }
+
+      // 여기서부터는 error.response가 있다는 것이 보장됨
+      const {status, data} = error.response;
+
+      // 422 Validation Error 특별 처리
+      if (status === 422 && data?.errors) {
+        throw new NetworkError({
+          code: status,
+          message: NetworkError.errorMessages[status],
+          errors: data.errors,
+        });
+      }
+
+      // 401 인증 에러 처리
+      if (status === 401) {
+        throw new NetworkError({
+          code: status,
+          message: NetworkError.errorMessages[status] || '인증이 필요합니다.',
+        });
+      }
+
+      // 일반 에러 처리
+      throw new NetworkError({
+        code: status,
+        message:
+          NetworkError.errorMessages[status] || '서버 오류가 발생했습니다.',
+        errors: data?.errors,
+      });
     },
   );
 

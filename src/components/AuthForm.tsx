@@ -16,7 +16,7 @@ const AuthForm = ({type, errors}: AuthFormProps) => {
   const switchLink = isLogin ? '/register' : '/login';
 
   return (
-    <div className="container mx-auto px-4 ">
+    <div className="container mx-auto px-4 pt-4 ">
       <div className="flex justify-center ">
         <section className="w-full max-w-md">
           <header className="mb-8">
