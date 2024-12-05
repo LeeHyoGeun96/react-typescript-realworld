@@ -1,8 +1,14 @@
-# React + TypeScript RealWorld 프로젝트
+# ![RealWorld Example App](logo.png)
 
-## 🚀 프로젝트 소개
+> ### React와 TypeScript로 구현한 실제 애플리케이션으로, [RealWorld](https://github.com/gothinkster/realworld) 스펙과 API를 준수하며 CRUD, 인증, 고급 패턴 등을 포함합니다.
 
-이 프로젝트는 RealWorld 스펙을 기반으로 React와 TypeScript를 사용하여 구현한 블로그 플랫폼입니다.
+### [데모](https://realworld3397.netlify.app)&nbsp;&nbsp;&nbsp;&nbsp;[RealWorld](https://github.com/gothinkster/realworld)
+
+이 프로젝트는 **React와 TypeScript**를 사용하여 CRUD 작업, 인증, 라우팅, 페이지네이션 등을 포함한 완전한 기능을 갖춘 풀스택 애플리케이션을 구현한 것입니다.
+
+React와 TypeScript 커뮤니티의 스타일 가이드와 모범 사례를 최대한 준수하려 노력했습니다.
+
+다른 프론트엔드/백엔드와의 연동 방법에 대한 자세한 내용은 [RealWorld](https://github.com/gothinkster/realworld) 저장소를 참조하세요.
 
 ## ✨ 주요 기능
 
@@ -71,6 +77,13 @@ src/
 ## 📄 라이선스
 
 이 프로젝트는 MIT 라이선스를 따릅니다. 자세한 내용은 [LICENSE](./LICENSE) 파일을 참고해주세요.
+
+## BackEnd
+
+[RealWorld Backend](https://github.com/LeeHyoGeun96/node-express-prisma-v1-official-app)
+
+해당 레파이토리에서 백엔드 서버를 구축해야 합니다.
+실행 시킨 후 .env 파일에서 API 주소를 변경해야 합니다.
 
 ## 🔧 환경 설정
 
