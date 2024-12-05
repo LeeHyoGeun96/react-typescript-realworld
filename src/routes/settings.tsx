@@ -79,9 +79,9 @@ const SettingsPage = () => {
   }
 
   return (
-    <main className="py-8 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <main className="py-8  dark:bg-gray-900 min-h-screen">
       <div className="max-w-4xl mx-auto px-4">
-        <section className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 md:p-8">
+        <section className="bg-white dark:bg-gray-800 rounded-lg  p-6 md:p-8">
           <h2 className="text-5xl text-center text-gray-800 dark:text-gray-100 mb-8">
             Your Settings
           </h2>
