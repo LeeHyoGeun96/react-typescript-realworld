@@ -47,13 +47,20 @@ const AuthForm = ({type, errors}: AuthFormProps) => {
               </fieldset>
             )}
             <fieldset className="mb-4">
-              <Input type="email" name="email" placeholder="Email" required />
+              <Input
+                type="email"
+                name="email"
+                placeholder="Email"
+                autoComplete="email"
+                required
+              />
             </fieldset>
             <fieldset className="mb-4">
               <Input
                 type="password"
                 name="password"
                 placeholder="Password"
+                autoComplete="current-password"
                 required
               />
             </fieldset>

@@ -113,6 +113,7 @@ const SettingsPage = () => {
                   placeholder="Your Name"
                   defaultValue={user?.username || ''}
                   name="username"
+                  autoComplete="username"
                 />
               </div>
 
@@ -152,6 +153,7 @@ const SettingsPage = () => {
                   type="password"
                   placeholder="New Password"
                   name="password"
+                  autoComplete="current-password"
                 />
               </div>
             </div>
