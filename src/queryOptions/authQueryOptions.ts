@@ -1,6 +1,7 @@
 import {queryOptions} from '@tanstack/react-query';
 import {authService} from '../services/auth.service';
 import {SignupRequestParams, LoginRequestParams} from '../types/authTypes';
+import {setReactQueryTime} from '../util/setReactQueryTime';
 
 export const authQueryOptions = {
   signup: (data: SignupRequestParams) =>
@@ -23,7 +24,7 @@ export const authQueryOptions = {
     queryOptions({
       queryKey: ['auth', 'currentUser', token],
       queryFn: () => authService.getCurrentUser(token),
-      staleTime: 1000 * 60 * 5,
-      gcTime: 1000 * 60 * 10,
+      staleTime: setReactQueryTime('5/0'),
+      gcTime: setReactQueryTime('10/0'),
     }),
 };
