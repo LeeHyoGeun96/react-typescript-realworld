@@ -86,12 +86,12 @@ export const action =
         return redirect(`/article/${response.article.slug}`);
       } else {
         // 생성
-        const response = await articleService.createArticle({
+        await articleService.createArticle({
           article: articleData,
           token,
         });
         await queryClient.invalidateQueries({queryKey: ['articles']});
-        return redirect(`/article/${response.article.slug}`);
+        return redirect(`/`);
       }
     } catch (error) {
       if (NetworkError.isNetworkError(error)) {
