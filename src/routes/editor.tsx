@@ -198,7 +198,7 @@ const EditorPage = () => {
                   <Input
                     id="body"
                     isTextArea
-                    placeholder="Write your article (in markdown)"
+                    placeholder="Write your article"
                     defaultValue={article.body}
                     name="body"
                     className="min-h-[200px]"
