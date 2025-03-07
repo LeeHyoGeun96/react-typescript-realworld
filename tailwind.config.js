@@ -6,6 +6,7 @@ export default {
     extend: {
       colors: {
         'brand-primary': '#5CB85C',
+        'brand-secondary': '#4CAF50',
         'brand-danger': '#B85C5C',
         // 다크모드 색상
         dark: {
