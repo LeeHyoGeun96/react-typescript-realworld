@@ -16,11 +16,11 @@ const CommentCard = ({
   canModify,
 }: CommentCardProps) => {
   return (
-    <div className="card">
+    <div className="card bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
       <div className="card-block">
         <p className="card-text">{comment.body}</p>
       </div>
-      <div className="card-footer">
+      <div className="card-footer flex items-center gap-2">
         <Link
           to={`/profile/${comment.author.username}`}
           className="comment-author"
