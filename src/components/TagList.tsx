@@ -5,19 +5,18 @@ interface TagListProps {
 
 const TagList = ({tags, onRemoveTag}: TagListProps) => {
   return (
-    <ul className="flex flex-wrap gap-2">
+    <ul className="flex items-center gap-1 ">
       {tags.map((tag) => (
         <li
           key={tag}
-          className="inline-flex items-center px-3 py-1 rounded-full text-sm 
-                     bg-gray-200 text-gray-700 hover:bg-gray-300 
-                     dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 
-                     transition-colors duration-200"
+          className="block px-2 py-1 text-sm
+              rounded-full transition-colors
+              whitespace-nowrap"
         >
           {onRemoveTag && (
             <button
               onClick={() => onRemoveTag(tag)}
-              className="mr-1 hover:text-red-500 focus:outline-none"
+              className="mr-1 hover:text-red-500 focus:outline-none "
               aria-label={`Remove ${tag} tag`}
             >
               <svg
@@ -34,7 +33,7 @@ const TagList = ({tags, onRemoveTag}: TagListProps) => {
               </svg>
             </button>
           )}
-          <span>{tag}</span>
+          {tag}
         </li>
       ))}
     </ul>

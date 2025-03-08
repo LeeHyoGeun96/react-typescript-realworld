@@ -13,15 +13,15 @@ const SelectTag = ({tags, onTagClick, selectedTag}: SelectTagProps) => {
     <>
       {/* 모바일 버전 */}
       <nav className="lg:hidden ">
-        <ul className=" flex gap-2 overflow-x-auto no-scrollbar touch-scroll pb-2">
+        <ul className=" flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <li key={tag}>
+            <li key={tag} className="flex items-center gap-1">
               <button
                 type="button"
                 className={`
-                  inline-block px-3 py-1 text-sm 
-                  rounded-full transition-colors
-                  whitespace-nowrap
+                  inline-block px-2 py-1 text-sm
+              rounded-full transition-colors
+              whitespace-nowrap 
                   ${
                     selectedTag === tag
                       ? 'bg-green-500 text-white'
@@ -45,14 +45,15 @@ const SelectTag = ({tags, onTagClick, selectedTag}: SelectTagProps) => {
           </h2>
 
           <nav>
-            <ul className="grid grid-cols-2 gap-2">
+            <ul className="flex flex-wrap gap-2">
               {tags.map((tag) => (
-                <li key={tag}>
+                <li key={tag} className="flex items-center gap-1">
                   <button
                     type="button"
                     className={`
                       inline-block px-2 py-1 text-sm
-                      rounded-full transition-colors
+              rounded-full transition-colors
+              whitespace-nowrap
                       ${
                         selectedTag === tag
                           ? 'bg-green-500 text-white'
